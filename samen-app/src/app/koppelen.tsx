@@ -6,11 +6,11 @@ import { notify } from '@/lib/notify';
 import { useStore } from '@/lib/store';
 
 export default function Koppelen() {
-  const { profile, cloudAvailable, createCouple, joinCouple, startDemo } = useStore();
+  const { profile, cloudAvailable, sharedAvailable, createCouple, joinCouple, startDemo, startShared } = useStore();
   const [code, setCode] = useState('');
-  const [busy, setBusy] = useState<'create' | 'join' | 'demo' | null>(null);
+  const [busy, setBusy] = useState<'create' | 'join' | 'demo' | 'shared' | null>(null);
 
-  const run = (kind: 'create' | 'join' | 'demo', fn: () => Promise<void>) => async () => {
+  const run = (kind: 'create' | 'join' | 'demo' | 'shared', fn: () => Promise<void>) => async () => {
     setBusy(kind);
     try {
       await fn();
@@ -28,19 +28,33 @@ export default function Koppelen() {
       <H1>Hoi {profile?.name}! Koppel met je partner</H1>
       <Body>Jullie krijgen allebei een eigen account. Wat persoonlijk is, blijft van jezelf; wat jullie delen, zien jullie samen.</Body>
 
-      <Card tone="lav">
-        <H2>Ik begin</H2>
-        <Small>Je krijgt een code van zes tekens die je partner in de eigen app invult.</Small>
-        <Button title="Maak onze koppelcode" onPress={run('create', createCouple)} disabled={!cloudAvailable} loading={busy === 'create'} />
-      </Card>
+      {sharedAvailable && (
+        <Card tone="pink">
+          <H2>Samen op deze pagina</H2>
+          <Small>
+            Jullie openen allebei deze pagina, ieder op je eigen telefoon. Alles wat jullie doen, zien jullie live bij elkaar.
+          </Small>
+          <Button title="Start samen" onPress={run('shared', startShared)} loading={busy === 'shared'} />
+        </Card>
+      )}
 
-      <Card tone="mint">
-        <H2>Ik heb een code gekregen</H2>
-        <Field value={code} onChangeText={t => setCode(t.toUpperCase())} placeholder="Bijv. K7M2QX" autoCapitalize="characters" maxLength={6} autoCorrect={false} />
-        <Button title="Koppelen" onPress={run('join', () => joinCouple(code))} disabled={!cloudAvailable || code.trim().length !== 6} loading={busy === 'join'} />
-      </Card>
+      {cloudAvailable && (
+        <>
+          <Card tone="lav">
+            <H2>Ik begin</H2>
+            <Small>Je krijgt een code van zes tekens die je partner in de eigen app invult.</Small>
+            <Button title="Maak onze koppelcode" onPress={run('create', createCouple)} loading={busy === 'create'} />
+          </Card>
 
-      {!cloudAvailable && (
+          <Card tone="mint">
+            <H2>Ik heb een code gekregen</H2>
+            <Field value={code} onChangeText={t => setCode(t.toUpperCase())} placeholder="Bijv. K7M2QX" autoCapitalize="characters" maxLength={6} autoCorrect={false} />
+            <Button title="Koppelen" onPress={run('join', () => joinCouple(code))} disabled={code.trim().length !== 6} loading={busy === 'join'} />
+          </Card>
+        </>
+      )}
+
+      {!cloudAvailable && !sharedAvailable && (
         <Small>De server is in deze versie nog niet ingesteld, dus echt koppelen kan nog niet. Probeer de demo.</Small>
       )}
 

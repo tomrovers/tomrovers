@@ -43,6 +43,8 @@ export default function Instellingen() {
         <H2>Jullie koppel</H2>
         {mode === 'demo' ? (
           <Body>Je speelt de demo met Sam. Alles blijft op deze telefoon.</Body>
+        ) : mode === 'shared' ? (
+          <Body>{state.partnerId ? `Gekoppeld met ${partnerName} via deze gedeelde pagina.` : 'Je partner is nog niet aangesloten.'}</Body>
         ) : (
           <>
             <Body>{state.partnerId ? `Gekoppeld met ${partnerName}.` : 'Je partner is nog niet gekoppeld.'}</Body>
@@ -55,9 +57,10 @@ export default function Instellingen() {
         <H2>Privacy</H2>
         <Body>
           <Strong>Check-ins en antwoorden</Strong> zijn pas zichtbaar voor je partner als jullie allebei hebben ingevuld.
+          {mode === 'shared' ? ' In deze testversie regelt de app dat; in de echte app doet de server het.' : ''}
         </Body>
         <Body>
-          <Strong>Notities “alleen voor mij”</Strong> kan alleen jij lezen, ook op de server.
+          <Strong>Notities “alleen voor mij”</Strong> kan alleen jij lezen{mode === 'shared' ? '' : ', ook op de server'}.
         </Body>
         <Body>Bij ontkoppelen worden jouw eigen gegevens verwijderd.</Body>
       </Card>

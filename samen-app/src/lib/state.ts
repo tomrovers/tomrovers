@@ -281,14 +281,18 @@ export function deriveState(all: SamenEvent[], myId: string, memberIds: string[]
 
 export function daySuggestion(mine: CheckInPayload, partner: CheckInPayload, partnerName: string): string {
   const needs = [mine.need, partner.need];
-  const lowEnergy = Math.min(mine.energy, partner.energy) <= 2;
+  const tired = (c: CheckInPayload) => c.need === 'rust' || c.energy <= 2 || c.mood === 'moe';
+  const oneTired = tired(mine) !== tired(partner);
   if (needs.every(n => n === 'rust')) return 'Jullie hebben allebei zin in rust. Een dekentje, thee en een fijne serie?';
   if (needs.includes('ruimte')) return 'Een van jullie heeft even tijd voor zichzelf nodig. Spreek af wanneer jullie weer samen bijkletsen.';
-  if (needs.includes('intimiteit') && lowEnergy) return 'Zin in nabijheid, maar weinig energie: kruip vroeg samen onder de dekens.';
+  if (oneTired) {
+    const who = tired(mine) ? 'Jij bent' : `${partnerName} is`;
+    return `${who} toe aan rust. Maak er een rustig avondje samen van, met een klein liefdevol moment: een knuffel op de bank of een kop thee.`;
+  }
+  if (tired(mine) && tired(partner)) return 'Het was voor jullie allebei een drukke dag. Houd het klein en lief: een knuffel en vroeg naar bed.';
   if (needs.includes('intimiteit')) return 'Maak tijd voor een romantisch moment, met kaarsjes of een lange knuffel.';
   if (needs.includes('aandacht')) return `Neem tien minuten om echt te vragen hoe de dag van ${partnerName} was.`;
-  if (needs.includes('gezelligheid') && !lowEnergy) return 'Genoeg energie voor gezelligheid: samen koken of een potje in de Playground?';
-  if (lowEnergy) return 'Het was een drukke dag. Houd het klein en lief: een knuffel en vroeg naar bed.';
+  if (needs.includes('gezelligheid')) return 'Genoeg energie voor gezelligheid: samen koken of een potje in de Playground?';
   return 'Een gewone fijne dag. Een klein gebaar maakt hem extra mooi.';
 }
 

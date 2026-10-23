@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 
 import { actions } from './actions';
 import { DemoBackend } from './backend/demo';
+import { detectShared, SharedBackend } from './backend/shared';
 import { cloudConfigured, SupabaseBackend } from './backend/supabase';
 import type { Backend, Session } from './backend/types';
 import { defaultRewards } from './content';
@@ -9,7 +10,7 @@ import { deriveState, type CoupleState } from './state';
 import * as storage from './storage';
 import type { NewEvent, Profile, SamenEvent } from './types';
 
-type Mode = 'demo' | 'cloud';
+type Mode = 'demo' | 'cloud' | 'shared';
 export type Status = 'loading' | 'needs-profile' | 'needs-couple' | 'ready';
 
 type Store = {
@@ -19,8 +20,11 @@ type Store = {
   profile: Profile | null;
   state: CoupleState | null;
   cloudAvailable: boolean;
+  /** True when this page has its own shared database (the web version published on claude.ai). */
+  sharedAvailable: boolean;
   saveProfile: (profile: Profile) => Promise<void>;
   startDemo: () => Promise<void>;
+  startShared: () => Promise<void>;
   createCouple: () => Promise<void>;
   joinCouple: (code: string) => Promise<void>;
   post: (event: NewEvent) => Promise<void>;
@@ -32,10 +36,12 @@ const MODE_KEY = 'samen.mode';
 
 const StoreContext = createContext<Store | null>(null);
 
-const makeBackend = (mode: Mode): Backend => (mode === 'demo' ? new DemoBackend() : new SupabaseBackend());
+const makeBackend = (mode: Mode): Backend =>
+  mode === 'demo' ? new DemoBackend() : mode === 'shared' ? new SharedBackend() : new SupabaseBackend();
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [booted, setBooted] = useState(false);
+  const [sharedAvailable, setSharedAvailable] = useState(false);
   const [mode, setMode] = useState<Mode | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -68,9 +74,22 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     (async () => {
       try {
-        const [rawProfile, savedMode] = await Promise.all([storage.load(PROFILE_KEY), storage.load(MODE_KEY)]);
+        const [rawProfile, savedMode, shared] = await Promise.all([storage.load(PROFILE_KEY), storage.load(MODE_KEY), detectShared()]);
+        setSharedAvailable(!!shared);
         if (rawProfile) setProfile(JSON.parse(rawProfile));
-        if (savedMode === 'demo' || (savedMode === 'cloud' && cloudConfigured)) await connect(savedMode);
+        if (savedMode === 'demo' || (savedMode === 'cloud' && cloudConfigured) || (savedMode === 'shared' && shared)) {
+          await connect(savedMode);
+        } else if (shared && savedMode !== 'demo') {
+          // On a new phone or browser: pick up your own profile if you already joined this page.
+          const b = new SharedBackend();
+          const s = await b.start();
+          const mine = (await b.fetchEvents()).filter(e => e.authorId === s.userId && e.type === 'profile').pop();
+          if (mine?.type === 'profile') {
+            setProfile(mine.payload);
+            await storage.save(PROFILE_KEY, JSON.stringify(mine.payload));
+            await connect('shared');
+          }
+        }
       } catch (e) {
         console.warn('Samen kon niet opstarten', e);
       } finally {
@@ -130,6 +149,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     await afterCreate();
   }, [afterCreate, connect]);
 
+  const startShared = useCallback(async () => {
+    profilePostedFor.current = 'main'; // posted right below, not by the effect
+    await connect('shared');
+    const b = backend.current as SharedBackend;
+    const first = !b.hasEvents();
+    if (profile) await b.post(actions.profile(profile));
+    if (first) await afterCreate();
+    else await reload();
+  }, [afterCreate, connect, profile, reload]);
+
   const createCouple = useCallback(async () => {
     if (backend.current?.mode !== 'cloud') await connect('cloud');
     await backend.current!.createCouple();
@@ -163,8 +192,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     profile,
     state,
     cloudAvailable: cloudConfigured,
+    sharedAvailable,
     saveProfile,
     startDemo,
+    startShared,
     createCouple,
     joinCouple,
     post,

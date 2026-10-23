@@ -17,7 +17,7 @@ const moodLabel = (id: string) => moods.find(m => m.id === id);
 const needLabel = (id: string) => needs.find(n => n.id === id)?.label.toLowerCase();
 
 export default function Thuis() {
-  const { state, session, post } = useCouple();
+  const { state, session, mode, post } = useCouple();
   const [message, setMessage] = useState<string | null>(null);
   const [sent, setSent] = useState<string | null>(null);
   const partnerName = nameOf(state, state.partnerId);
@@ -48,7 +48,7 @@ export default function Thuis() {
         </Pressable>
       </Row>
 
-      {!hasPartner && (
+      {!hasPartner && session.code && (
         <Card tone="peach">
           <H2>Nodig je partner uit</H2>
           <Body>Je partner installeert Samen en vult deze code in:</Body>
@@ -60,6 +60,13 @@ export default function Thuis() {
             variant="secondary"
             onPress={() => Share.share({ message: `Kom je bij mij in Samen? Onze koppelcode is ${session.code}` })}
           />
+        </Card>
+      )}
+      {!hasPartner && mode === 'shared' && (
+        <Card tone="peach">
+          <H2>Nodig je partner uit</H2>
+          <Body>Deel deze pagina met je partner via het Share-menu van claude.ai. Kies daar de rol Editor, anders kan je partner niets opslaan.</Body>
+          <Small>Zodra je partner een LoveGotchi heeft gemaakt en op “Start samen” tikt, verschijnt die hier in jullie huisje.</Small>
         </Card>
       )}
 

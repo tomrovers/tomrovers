@@ -23,8 +23,16 @@ ingevuld. Notities "alleen voor mij" kan alleen jij lezen. Dat regelt de server,
 
 ## 1. Uitproberen zonder iets te installeren
 
-Open de webdemo die Claude heeft gepubliceerd (de link staat in het gesprek). Daar speel je met Sam en blijft alles
-in je eigen browser.
+Open de webversie die Claude heeft gepubliceerd (de link staat in het gesprek). Daar kun je kiezen uit:
+
+- **Start samen**: jullie openen allebei dezelfde pagina, ieder op de eigen telefoon. De pagina heeft een eigen
+  gedeelde database (`src/lib/backend/shared.ts`), dus er is geen server nodig. Deel de pagina via het Share-menu van
+  claude.ai met je partner, met de rol **Editor** (anders kan je partner niets opslaan). Je partner heeft een
+  claude.ai-account nodig.
+- **Probeer de demo**: je speelt met een gesimuleerde partner, Sam, en alles blijft in je eigen browser.
+
+In de testversie verbergt de app zelf een check-in of antwoord totdat jullie allebei hebben ingevuld. In de echte app
+met Supabase dwingt de server dat af. Notities "alleen voor mij" zijn ook in de testversie echt privé.
 
 ## 2. Uitproberen op je eigen telefoon
 

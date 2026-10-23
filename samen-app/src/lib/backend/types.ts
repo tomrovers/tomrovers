@@ -8,7 +8,7 @@ export type Session = {
 };
 
 export interface Backend {
-  readonly mode: 'demo' | 'cloud';
+  readonly mode: 'demo' | 'cloud' | 'shared';
   start(): Promise<Session>;
   createCouple(): Promise<Session>;
   joinCouple(code: string): Promise<Session>;
