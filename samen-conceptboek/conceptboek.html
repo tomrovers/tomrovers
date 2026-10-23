@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Samen – Conceptboek</title>
+<style>
+  @font-face { font-family: 'Lato'; font-weight: 400; font-style: normal; src: url(assets/fonts/Lato-Regular.ttf); }
+  @font-face { font-family: 'Lato'; font-weight: 400; font-style: italic; src: url(assets/fonts/Lato-Italic.ttf); }
+  @font-face { font-family: 'Lato'; font-weight: 700; font-style: normal; src: url(assets/fonts/Lato-Bold.ttf); }
+  @font-face { font-family: 'Lato'; font-weight: 900; font-style: normal; src: url(assets/fonts/Lato-Black.ttf); }
+
+  :root {
+    --cream: #fff8f5;
+    --ink: #3d2240;
+    --plum: #6e2d5c;
+    --text: #5c4a5f;
+    --muted: #7d6c80;
+    --rose: #e0558a;
+    --pink: #fbe4e8;
+    --lav: #efe5f8;
+    --mint: #e6f3ee;
+    --peach: #fff0dc;
+    --blue: #e5eafb;
+    --line: #ecd9df;
+  }
+
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #d9cfd3; }
+  body {
+    font-family: 'Lato', sans-serif;
+    color: var(--text);
+    font-size: 9.2pt;
+    line-height: 1.45;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  @media screen { .page { margin: 10mm auto; box-shadow: 0 2mm 8mm rgba(61,34,64,.15); } }
+
+  .page {
+    width: 210mm; height: 297mm;
+    padding: 13mm 15mm 11mm;
+    position: relative; overflow: hidden;
+    background: var(--cream);
+    display: flex; flex-direction: column;
+    page-break-after: always; break-after: page;
+  }
+  .page:last-child { page-break-after: auto; break-after: auto; }
+  .page::before, .page::after { content: ''; position: absolute; border-radius: 50%; z-index: 0; }
+  .page::before { width: 46mm; height: 46mm; right: -16mm; top: -24mm; background: var(--pink); }
+  .page::after  { width: 34mm; height: 34mm; left: -22mm; bottom: 20mm; background: var(--lav); }
+  .page > * { position: relative; z-index: 1; }
+
+  /* Header & footer */
+  .eyebrow { font-size: 7.4pt; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--rose);
+             padding-bottom: 2.2mm; border-bottom: .3mm solid var(--line); }
+  h1 { font-size: 24pt; font-weight: 900; color: var(--ink); line-height: 1.12; margin-top: 4.5mm; letter-spacing: -.01em; }
+  .lede { font-size: 10pt; color: var(--muted); margin-top: 3mm; max-width: 172mm; }
+  .content { flex: 1; display: flex; flex-direction: column; gap: 5mm; margin-top: 7mm; min-height: 0; }
+  .footer { display: flex; justify-content: space-between; border-top: .3mm solid var(--line); padding-top: 2.4mm;
+            font-size: 6.8pt; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin-top: 5mm; }
+
+  /* Building blocks */
+  .card { border-radius: 5mm; padding: 4.6mm 5mm; }
+  .pink { background: var(--pink); } .lav { background: var(--lav); } .mint { background: var(--mint); }
+  .peach { background: var(--peach); } .blue { background: var(--blue); }
+  .outline { background: #fff; border: .35mm solid var(--line); }
+  .dark { background: var(--plum); color: #fbe9f1; }
+  .card h3 { font-size: 10.5pt; font-weight: 700; color: var(--plum); margin-bottom: 1.4mm; }
+  .card h3.big { font-size: 12.5pt; color: var(--ink); }
+  .card p + p { margin-top: 1.6mm; }
+  h2 { font-size: 13pt; font-weight: 700; color: var(--ink); }
+  .grid { display: grid; gap: 3.6mm; }
+  .g2 { grid-template-columns: 1fr 1fr; } .g3 { grid-template-columns: repeat(3, 1fr); }
+  .stack { display: flex; flex-direction: column; gap: 3.4mm; }
+  .row { display: flex; gap: 5mm; }
+  .grow { flex: 1; }
+  .callout { background: var(--pink); border-radius: 5mm; padding: 6mm 6mm; font-size: 11.5pt; font-weight: 700; color: var(--plum); line-height: 1.4; }
+  .push { margin-top: auto; }
+  .num { flex: none; width: 8.5mm; height: 8.5mm; border-radius: 50%; background: #fff; color: var(--plum);
+         font-weight: 700; font-size: 8.5pt; display: flex; align-items: center; justify-content: center; }
+  .num.soft { background: var(--pink); }
+  .step { display: flex; gap: 4mm; align-items: flex-start; }
+  .chip { display: inline-block; background: #fff; border-radius: 10mm; padding: 1.3mm 3.2mm; font-size: 7.4pt; font-weight: 700; color: var(--plum); }
+  .chips { display: flex; flex-wrap: wrap; gap: 2mm; }
+  .tag { font-size: 7.2pt; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--plum); }
+  .arrow { text-align: center; color: var(--rose); font-size: 12pt; line-height: 1; margin: -1.6mm 0; }
+  .img { border-radius: 5mm; overflow: hidden; background: #f3e6ea; }
+  .img img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .phone { border-radius: 4mm; overflow: hidden; }
+  .phone img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  ul.dots { list-style: none; }
+  ul.dots li { position: relative; padding-left: 4.5mm; margin-top: 1.5mm; }
+  ul.dots li::before { content: ''; position: absolute; left: 0; top: 1.55mm; width: 1.7mm; height: 1.7mm; border-radius: 50%; background: var(--rose); }
+  .quote { font-style: italic; color: var(--ink); }
+  .small { font-size: 8pt; color: var(--muted); }
+  strong { color: var(--ink); }
+  .dark strong { color: #fff; }
+  table { width: 100%; border-collapse: collapse; }
+  td { padding: 2.2mm 4mm; border-top: .3mm solid #f2dce3; }
+  tr:first-child td { border-top: 0; }
+  td:first-child { font-weight: 700; color: var(--plum); width: 52%; }
+  .heart { display: inline-block; width: 3.2mm; height: 3.2mm; vertical-align: -.4mm; }
+
+  /* Cover */
+  .cover { padding-top: 22mm; }
+  .cover::before { width: 120mm; height: 120mm; right: -48mm; top: -50mm; }
+  .cover::after { width: 80mm; height: 80mm; left: -40mm; bottom: 30mm; }
+  .cover .title { font-size: 64pt; font-weight: 900; color: var(--plum); line-height: 1; margin-top: 18mm; letter-spacing: -.02em; }
+  .cover .sub { font-size: 15pt; font-weight: 700; color: var(--ink); margin-top: 4mm; }
+  .cover .sub::after { content: ''; display: block; width: 18mm; height: 1mm; border-radius: 1mm; background: var(--rose); margin-top: 3.5mm; }
+  .cover .intro { font-size: 13pt; color: var(--text); line-height: 1.45; margin-top: 5mm; max-width: 125mm; }
+  .cover .visual { position: relative; height: 112mm; margin-top: 10mm; }
+  .cover .visual .hero { position: absolute; right: 0; top: 0; width: 100mm; height: 104mm; border-radius: 7mm; overflow: hidden; box-shadow: 0 2mm 6mm rgba(110,45,92,.18); }
+  .cover .visual .hero img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+  .cover .visual .mini { position: absolute; left: 18mm; top: 14mm; width: 40mm; height: 98mm; border-radius: 5mm; overflow: hidden; box-shadow: 0 2mm 6mm rgba(61,34,64,.22); }
+  .cover .visual .mini img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cover .pill { align-self: flex-start; background: var(--pink); border-radius: 10mm; padding: 2.2mm 5mm; font-size: 7.6pt; font-weight: 700; letter-spacing: .06em; color: var(--plum); margin-top: 8mm; }
+  .cover .meta { margin-top: auto; font-size: 8.6pt; color: var(--muted); }
+  .cover .meta strong { display: block; color: var(--plum); margin-top: 2mm; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="h" viewBox="0 0 24 24"><path fill="#e0558a" d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.8 4.5c2.2 0 3.6 1.2 4.2 2.3h2c.6-1.1 2-2.3 4.2-2.3 3.8 0 5.9 3.9 4.4 7.3C19.5 16.4 12 21 12 21z"/></symbol>
+</svg>
+
+<!-- 1. COVER -->
+<section class="page cover" data-nofooter>
+  <div class="tag" style="color:var(--plum)">Een idee om samen over te dromen</div>
+  <div class="title">Samen</div>
+  <div class="sub">Van eerste klik tot blijvende verbinding</div>
+  <p class="intro">Een warme, speelse digitale wereld waar mensen elkaar op een betekenisvolle manier ontmoeten, samen groeien en ook na jaren blijven ontdekken wat de ander gelukkig maakt.</p>
+  <div class="visual">
+    <div class="hero"><img src="assets/img/koppel-bank.jpg" alt=""></div>
+    <div class="mini"><img src="assets/img/scherm-thuis-groot.jpg" alt=""></div>
+  </div>
+  <div class="pill">AVATARS &nbsp;•&nbsp; HUISJES &nbsp;•&nbsp; MINIGAMES &nbsp;•&nbsp; GESPREKSKAARTEN &nbsp;•&nbsp; ECHTE VERBINDING</div>
+  <div class="meta">
+    Vernieuwd appconcept &nbsp;|&nbsp; Oktober 2026
+    <strong>Voor Annelieke – om samen verder te dromen en te ontwikkelen.</strong>
+  </div>
+</section>
+
+<!-- 2. DRIE HOOFDSTUKKEN -->
+<section class="page">
+  <div class="eyebrow">De grote gedachte</div>
+  <h1>Eén wereld. Drie hoofdstukken.</h1>
+  <p class="lede">Met gepersonaliseerde mini-avatars, een eigen digitaal huis, echte minigames, gesprekskaarten, persoonlijke aandacht en een gezellige virtuele ontmoetingswereld groeit Samen met je mee.</p>
+  <div class="content">
+    <div class="card lav step"><div class="num">01</div><div>
+      <h3 class="big">Samen Singles — elkaar vinden</h3>
+      <p>Voor volwassenen die <strong>een serieuze relatie</strong> zoeken. Een persoonlijk Kompas helpt je ontdekken welke waarden, interesses, levensdoelen en verwachtingen je belangrijk vindt. De app stelt passende mensen voor en maakt kennismaken ontspannen via gezamenlijke spellen en betekenisvolle gesprekken.</p>
+    </div></div>
+    <div class="arrow">↓</div>
+    <div class="card mint step"><div class="num">02</div><div>
+      <h3 class="big">Samen Couples — samen blijven groeien</h3>
+      <p>Partners verbinden hun accounts, maken herkenbare mini-avatars, bouwen een gezamenlijk digitaal huisje en hebben toegang tot dagelijkse check-ins, gesprekskaarten, het Samen Kompas en minigames. Door aandacht, spel en gezamenlijke momenten groeit hun gedeelde wereld.</p>
+    </div></div>
+    <div class="arrow">↓</div>
+    <div class="card peach step"><div class="num">03</div><div>
+      <h3 class="big">Samen New Chapter — een nieuw hoofdstuk</h3>
+      <p>Als een relatie eindigt, behoudt ieder zijn eigen avatar, persoonlijke voortgang en zelf ingevoerde voorkeuren. Wie dat wil, kan het persoonlijke Kompas opnieuw bekijken en bewust inzetten voor een volgende relatie.</p>
+    </div></div>
+    <div class="callout push"><span class="tag" style="display:block;margin-bottom:2mm;color:var(--rose)">De rode draad</span>Elkaar begrijpen wordt iets wat je niet één keer doet, maar op een vrolijke manier blijft doen.</div>
+  </div>
+</section>
+
+<!-- 3. UITSTRALING -->
+<section class="page">
+  <div class="eyebrow">De uitstraling van Samen</div>
+  <h1>Een eerste blik op Samen</h1>
+  <p class="lede">Samen voelt als een toegankelijke, warme app met een moderne speelse stijl: zachte kleuren, knusse omgevingen, expressieve 3D-cartoonpersonages, grappige animaties en eenvoudig te begrijpen knoppen.</p>
+  <div class="content">
+    <div class="grid" style="grid-template-columns:repeat(4,1fr);gap:5mm;align-items:end">
+      <div class="phone" style="height:100mm"><img src="assets/img/scherm-thuis.jpg" alt=""></div>
+      <div class="phone" style="height:100mm"><img src="assets/img/scherm-lovegotchi.jpg" alt=""></div>
+      <div class="phone" style="height:100mm"><img src="assets/img/scherm-playground.jpg" alt=""></div>
+      <div class="phone" style="height:100mm"><img src="assets/img/scherm-kompas.jpg" alt=""></div>
+    </div>
+    <div class="grid" style="grid-template-columns:repeat(4,1fr);gap:5mm">
+      <div><h3 style="color:var(--plum);font-size:10.5pt">01 &nbsp;Thuis</h3><p class="small">Jullie eigen wereld en de snelste weg naar alle dagelijkse functies.</p></div>
+      <div><h3 style="color:var(--plum);font-size:10.5pt">02 &nbsp;LoveGotchi</h3><p class="small">Jullie persoonlijke mini-avatars en hun expressies.</p></div>
+      <div><h3 style="color:var(--plum);font-size:10.5pt">03 &nbsp;Playground</h3><p class="small">Minigames, uitdagingen en beloningen.</p></div>
+      <div><h3 style="color:var(--plum);font-size:10.5pt">04 &nbsp;Kompas</h3><p class="small">Wat jullie voelen, waarderen, wensen en over elkaar ontdekken.</p></div>
+    </div>
+    <div class="card lav">
+      <h3>En daaromheen: een sociale wereld</h3>
+      <p>Bezoek elkaars huisjes, vorm teams met bevriende koppels en ontmoet nieuwe mensen op het Samen Plein.</p>
+    </div>
+    <div class="callout push">Warm, grappig en herkenbaar: van een lief hartje op de bank tot een uitbundige overwinningsdans.</div>
+  </div>
+</section>
+
+<!-- 4. LOVEGOTCHI -->
+<section class="page">
+  <div class="eyebrow">LoveGotchi</div>
+  <h1>Mini-versies van onszelf</h1>
+  <p class="lede">Iedere gebruiker krijgt een eigen avatar: een herkenbare, charmante mini-versie van zichzelf. Een selfie kan dienen als uitgangspunt, waarna kapsel, gezicht, kleding en accessoires naar wens aanpasbaar zijn.</p>
+  <div class="content">
+    <div class="row">
+      <div class="phone" style="width:62mm;height:150mm;flex:none"><img src="assets/img/lovegotchi.jpg" alt=""></div>
+      <div class="stack grow">
+        <div class="card pink">
+          <h3>Wat de avatars doen</h3>
+          <ul class="dots">
+            <li>Glimlachen na een lief bericht of compliment.</li>
+            <li>Samen een overwinningsdansje doen na een minigame.</li>
+            <li>Knuffelen of een hartje tonen na een bijzonder moment.</li>
+            <li>Nieuwe outfits, gezichtsuitdrukkingen en accessoires ontgrendelen.</li>
+            <li>Samen door het huisje en de virtuele wereld bewegen.</li>
+          </ul>
+        </div>
+        <div class="card lav step"><div class="num">1</div><div>
+          <h3>Jouw eigen stemming</h3>
+          <p>De persoonlijke stemming van je avatar komt uit je eigen check-in. Jij bepaalt hoe je je laat zien.</p>
+        </div></div>
+        <div class="card mint step"><div class="num">2</div><div>
+          <h3>Verbondenheidsenergie</h3>
+          <p>Een aparte, speelse meter laat zien welke leuke activiteiten en aandacht jullie samen hebben opgebouwd.</p>
+        </div></div>
+        <div class="card peach step"><div class="num">3</div><div>
+          <h3>Jullie blijven groeien</h3>
+          <p>Door samen te spelen en aandacht te geven verzamel je nieuwe expressies en unieke items.</p>
+        </div></div>
+      </div>
+    </div>
+    <div class="callout push">De avatars groeien mee met jullie verhaal en geven de app een herkenbaar gezicht.</div>
+  </div>
+</section>
+
+<!-- 5. HUISJE -->
+<section class="page">
+  <div class="eyebrow">Jullie eigen digitale huisje</div>
+  <h1>Van lege kamer naar ons eigen plekje</h1>
+  <p class="lede">Ieder koppel begint met een gezellig huisje dat ze samen inrichten en uitbreiden. Het wordt een persoonlijke plek die jullie stijl, humor en herinneringen laat zien.</p>
+  <div class="content">
+    <div class="row">
+      <div class="img" style="width:72mm;height:92mm;flex:none"><img src="assets/img/koppel-bank-staand.jpg" alt="" style="object-position:top"></div>
+      <div class="card lav grow">
+        <h3>Wat je kunt inrichten</h3>
+        <ul class="dots">
+          <li><strong>Woonkamer:</strong> banken, kussens, tafels, lampen, planten en schilderijen.</li>
+          <li><strong>Slaapkamer:</strong> bedden, verlichting en romantische decoratie.</li>
+          <li><strong>Keuken en eethoek:</strong> tafels, stoelen, mokken en sfeervolle details.</li>
+          <li><strong>Tuin of balkon:</strong> bloemen, vuurkorf, hangmat en lichtslingers.</li>
+          <li><strong>Extra kamers:</strong> een spelkamer, leeshoek, hobbyruimte of trofeeënkamer.</li>
+          <li><strong>Thema's:</strong> een warme herfstwoning, feestdagen, romantische stijlen of bijzondere seizoenen.</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <h2>Van stickerboek naar echte inrichting</h2>
+      <p style="margin-top:1.5mm">Het oorspronkelijke idee van een stickerboek wordt een veel tastbaarder verzamelsysteem. <strong>Elke achievement levert een decoratief object of ander vrijspeelbaar item op.</strong></p>
+    </div>
+    <div class="card outline" style="padding:2mm 1mm">
+      <table>
+        <tr><td>De Charmeur</td><td>Een gouden fotolijst</td></tr>
+        <tr><td>De Revanchekoning</td><td>Een arcadetrofee</td></tr>
+        <tr><td>Qualitytime-helden</td><td>Een gezellige sfeerlamp</td></tr>
+        <tr><td>De Mondige Medaille <span class="chip" style="background:var(--lav);margin-left:1.5mm">After Dark</span></td><td>Een ondeugend gouden pronkstuk</td></tr>
+        <tr><td>Olympisch Matrasworstelen <span class="chip" style="background:var(--lav);margin-left:1.5mm">After Dark</span></td><td>Een grappige minitrofee</td></tr>
+      </table>
+    </div>
+    <div class="callout push">Zo vertelt de inrichting iets over jullie gezamenlijke avonturen en mooie momenten.</div>
+  </div>
+</section>
+
+<!-- 6. CHECK-INS -->
+<section class="page">
+  <div class="eyebrow">Elke dag een klein moment</div>
+  <h1>Hoe voel jij je vandaag?</h1>
+  <p class="lede">Beide partners krijgen op hun eigen ingestelde moment een vriendelijke herinnering om een korte dagelijkse check-in te doen.</p>
+  <div class="content">
+    <div class="grid g2" style="gap:5mm">
+      <div class="card lav" style="padding:6mm">
+        <div class="tag">Jouw check-in</div>
+        <h3 class="big" style="margin:3mm 0 4mm;font-size:15pt">Hoe gaat het?</h3>
+        <div class="stack" style="gap:2.6mm">
+          <div class="card pink" style="padding:3.4mm 4mm"><strong>Hoe voel jij je vandaag?</strong></div>
+          <div class="card peach" style="padding:3.4mm 4mm"><strong>Hoeveel energie heb je?</strong></div>
+          <div class="card mint" style="padding:3.4mm 4mm"><strong>Heb je behoefte aan rust, aandacht, gezelligheid of intimiteit?</strong></div>
+          <div class="card blue" style="padding:3.4mm 4mm"><strong>Wil je iets aan je partner laten weten?</strong></div>
+        </div>
+      </div>
+      <div class="card outline" style="padding:6mm;display:flex;flex-direction:column">
+        <div class="tag">Als jullie beiden klaar zijn</div>
+        <h3 class="big" style="margin:3mm 0 4mm;font-size:15pt">Vandaag samen</h3>
+        <p style="font-size:10pt"><strong>Jij:</strong> zin in qualitytime.</p>
+        <p style="font-size:10pt;margin-top:3mm"><strong>Je partner:</strong> moe na een drukke werkdag.</p>
+        <p style="font-size:10pt;margin-top:3mm;color:var(--ink)">Samen stelt een rustig avondje voor, met een klein, liefdevol moment.</p>
+        <span class="chip push" style="background:var(--pink);align-self:flex-start;margin-top:5mm">EEN KLEIN GEBAAR</span>
+      </div>
+    </div>
+    <div class="grid g2" style="gap:5mm">
+      <div class="card pink">
+        <h3>Een gedeeld dagbeeld</h3>
+        <p>Wanneer beide partners hun check-in hebben ingevuld, ontstaat een gedeeld dagbeeld met alleen wat ze vrijwillig met elkaar delen.</p>
+      </div>
+      <div class="card mint">
+        <h3>Persoonlijk ritme</h3>
+        <p>Ieder stelt een eigen herinneringsmoment in. Een tip uit het Kompas helpt je te reageren op wat je partner fijn vindt.</p>
+      </div>
+    </div>
+    <div class="callout push">Het dagelijkse ritueel duurt kort, maar kan uitmonden in een gesprek, een knuffel, een glimlach of een spontaan gebaar.</div>
+  </div>
+</section>
+
+<!-- 7. KOMPAS -->
+<section class="page">
+  <div class="eyebrow">Het Samen Kompas</div>
+  <h1>Onthouden wat de ander nodig heeft</h1>
+  <p class="lede">Dit onderdeel ontstond uit onze ervaring met liefdestaal-gesprekskaarten. Die kaarten leverden interessante gesprekken op, maar belandden daarna in de kast. Samen houdt de inzichten levend.</p>
+  <div class="content">
+    <div class="row">
+      <div class="phone" style="width:52mm;height:120mm;flex:none"><img src="assets/img/kompas.jpg" alt=""></div>
+      <div class="stack grow" style="gap:3mm">
+        <div class="card pink step"><div class="num">1</div><div><h3>Ontdekken</h3><p>Via vragen en spelletjes leren partners wat voor de ander belangrijk is.</p></div></div>
+        <div class="card lav step"><div class="num">2</div><div><h3>Onthouden</h3><p>Antwoorden vormen een persoonlijk behoeftenprofiel, met keuzes over wat wordt gedeeld.</p></div></div>
+        <div class="card mint step"><div class="num">3</div><div><h3>In de praktijk brengen</h3><p>Subtiele herinneringen stellen liefdevolle acties voor die bij de ander passen.</p></div></div>
+        <div class="card peach step"><div class="num">4</div><div><h3>Bijstellen</h3><p>Korte vervolgvragen en feedback houden het profiel actueel.</p></div></div>
+      </div>
+    </div>
+    <div class="grid g3">
+      <div class="card outline quote">“Je partner vindt het fijn als je spontaan een avondje voor jullie plant. Misschien een idee voor dit weekend?”</div>
+      <div class="card outline quote">“Na een drukke werkdag waardeert je partner vaak eerst een moment rust.”</div>
+      <div class="card outline quote">“Jullie willen graag vaker iets nieuws samen ondernemen. Zullen we een date-idee kiezen?”</div>
+    </div>
+    <div class="card lav">
+      <h3>Thema's in het Kompas</h3>
+      <div class="chips" style="margin-top:2mm">
+        <span class="chip">Liefde &amp; waardering</span><span class="chip">Qualitytime</span><span class="chip">Lichamelijke nabijheid</span>
+        <span class="chip">Praktische hulp</span><span class="chip">Communicatie</span><span class="chip">Dagelijks leven</span>
+        <span class="chip">Toekomstplannen</span><span class="chip">Dromen</span><span class="chip">Intimiteit</span><span class="chip">Fantasieën</span>
+      </div>
+    </div>
+    <div class="callout push">Ieder houdt controle over de eigen antwoorden en wat de ander ervan mag zien.</div>
+  </div>
+</section>
+
+<!-- 8. GESPREKSKAARTEN -->
+<section class="page">
+  <div class="eyebrow">Interactieve gesprekskaarten</div>
+  <h1>Een gesprek dat doorwerkt</h1>
+  <p class="lede">Gesprekskaarten worden een terugkerend spel, met vragen die beide partners apart of samen kunnen beantwoorden.</p>
+  <div class="content">
+    <div class="grid g2" style="gap:4.5mm">
+      <div class="card pink" style="height:36mm"><span class="chip">Liefde &amp; waardering</span><h3 class="big" style="margin-top:4.5mm">Wanneer voel jij je écht gezien?</h3></div>
+      <div class="card lav" style="height:36mm"><span class="chip">Dagelijks leven</span><h3 class="big" style="margin-top:4.5mm">Welke kleine gewoonte geeft jou rust?</h3></div>
+      <div class="card mint" style="height:36mm"><span class="chip">Communicatie</span><h3 class="big" style="margin-top:4.5mm">Wat helpt jou als we een lastige dag hebben?</h3></div>
+      <div class="card peach" style="height:36mm"><span class="chip">Dromen</span><h3 class="big" style="margin-top:4.5mm">Wat zouden we samen ooit nog willen beleven?</h3></div>
+      <div class="card pink" style="height:36mm"><span class="chip">Intimiteit</span><h3 class="big" style="margin-top:4.5mm">Wat is voor jou een fijn moment van nabijheid?</h3></div>
+      <div class="card lav" style="height:36mm"><span class="chip">Fantasieën</span><h3 class="big" style="margin-top:4.5mm">Welke wens of fantasie zou je eens willen bespreken?</h3></div>
+    </div>
+    <div class="card outline">
+      <p><strong>Zo werkt het:</strong> na het beantwoorden bekijk je overeenkomsten, verschillen en verrassende antwoorden. Belangrijke inzichten kunnen in het Kompas worden bewaard. Later kan Samen op een passend moment een herinnering of een nieuwe verdiepingsvraag aanbieden.</p>
+    </div>
+    <div class="card blue">
+      <h3>Kies jullie stemming</h3>
+      <div class="chips" style="margin-top:2mm"><span class="chip">Romantisch</span><span class="chip">Grappig</span><span class="chip">Serieus</span><span class="chip">Filosofisch</span><span class="chip">Ondeugend</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 9. PLAYGROUND -->
+<section class="page">
+  <div class="eyebrow">Samen Playground</div>
+  <h1>Echte minigames voor de lol</h1>
+  <p class="lede">Korte interactieve spellen, ontworpen voor twee partners die op dezelfde bank zitten of ieder op hun eigen telefoon spelen.</p>
+  <div class="content">
+    <div class="row">
+      <div class="phone" style="width:62mm;height:160mm;flex:none"><img src="assets/img/playground.jpg" alt=""></div>
+      <div class="stack grow" style="gap:3.2mm">
+        <div class="card pink"><h3>Reflex Battle</h3><p>Wie reageert het snelst op het juiste moment?</p></div>
+        <div class="card lav"><h3>Memory Match</h3><p>Wie onthoudt de meeste kaarten?</p></div>
+        <div class="card mint"><h3>Ken je mij?</h3><p>Wie weet het meeste over de behoeften en voorkeuren van de ander?</p></div>
+        <div class="card peach"><h3>Liefdesduel</h3><p>Een korte, speelse best-of-five wedstrijd.</p></div>
+        <div class="card blue"><h3>Samen puzzelen</h3><p>Los coöperatief een uitdaging op.</p></div>
+        <div class="card pink"><h3>Truth, Dare or Dream</h3><p>Ontdek elkaar via vragen, opdrachten en wensen.</p></div>
+      </div>
+    </div>
+    <div class="callout push">Bij het spelen verdien je hartjes, XP, trofeeën of decoratieve objecten — in competitieve én coöperatieve uitdagingen.</div>
+  </div>
+</section>
+
+<!-- 10. BELONINGEN -->
+<section class="page">
+  <div class="eyebrow">De beloningenpot &amp; achievements</div>
+  <h1>Van gewonnen duel naar nieuwe inrichting</h1>
+  <p class="lede">Voor een spel spreken partners samen af welke beloningen leuk zijn. De winnaar mag na afloop kiezen uit een aantal vooraf gekozen mogelijkheden.</p>
+  <div class="content">
+    <div class="card pink" style="padding:5.5mm">
+      <div class="tag" style="margin-bottom:3.5mm">De winnaar mag kiezen</div>
+      <div class="grid g3" style="gap:3mm">
+        <div class="card" style="background:#fff;padding:3.6mm 4mm"><h3>Massage</h3><p class="small">Tien minuten ontspannen</p></div>
+        <div class="card" style="background:#fff;padding:3.6mm 4mm"><h3>Film kiezen</h3><p class="small">De film voor vanavond</p></div>
+        <div class="card" style="background:#fff;padding:3.6mm 4mm"><h3>Ontbijt op bed</h3><p class="small">Rustig wakker worden</p></div>
+        <div class="card" style="background:#fff;padding:3.6mm 4mm"><h3>Mini-date</h3><p class="small">Laat er een organiseren</p></div>
+        <div class="card" style="background:#fff;padding:3.6mm 4mm"><h3>Taakje uit handen</h3><p class="small">Eén klus minder</p></div>
+        <div class="card" style="background:#fff;padding:3.6mm 4mm"><h3>Een berichtje</h3><p class="small">Lief of ondeugend</p></div>
+      </div>
+    </div>
+    <div class="grid g3">
+      <div class="card lav"><h3>01 &nbsp;Afspreken</h3><p>Kies samen welke beloningen in de pot gaan.</p></div>
+      <div class="card mint"><h3>02 &nbsp;Spelen</h3><p>Daag elkaar uit of speel samen een minigame.</p></div>
+      <div class="card peach"><h3>03 &nbsp;Kiezen</h3><p>De winnaar kiest; een beloning is altijd vrijwillig en af te stemmen.</p></div>
+    </div>
+    <div>
+      <h2>Virtuele prestaties krijgen een plek in de kamer</h2>
+      <p style="margin-top:1.5mm">Ze verschijnen als meubels, kunstwerken, decoratie, lichtjes of trofeeën in jullie huisje.</p>
+    </div>
+    <div class="grid g3">
+      <div class="card pink"><h3>De Charmeur</h3><p>Een gouden fotolijst</p></div>
+      <div class="card lav"><h3>De Revanchekoning</h3><p>Een arcadetrofee</p></div>
+      <div class="card mint"><h3>De Gedachtenlezer</h3><p>Een nieuw verzamelobject</p></div>
+    </div>
+    <div class="callout push">Zo levert een spel zowel een echt leuk moment als zichtbare groei in de digitale wereld op.</div>
+  </div>
+</section>
+
+<!-- 11. SAMEN BUURT -->
+<section class="page">
+  <div class="eyebrow">Samen Buurt</div>
+  <h1>Op bezoek bij bevriende koppels</h1>
+  <p class="lede">Met Samen Couples Plus kunnen bevriende koppels elkaar toevoegen en een virtueel bezoek brengen aan elkaars woning.</p>
+  <div class="content">
+    <div class="img" style="height:84mm"><img src="assets/img/huisje.jpg" alt=""></div>
+    <h2>Tijdens een bezoek kun je</h2>
+    <div class="grid g3" style="gap:3mm">
+      <div class="card pink" style="padding:3.8mm 4.2mm"><p>De kamers, inrichting en verzamelobjecten bewonderen.</p></div>
+      <div class="card lav" style="padding:3.8mm 4.2mm"><p>Een complimentje of hartje achterlaten.</p></div>
+      <div class="card mint" style="padding:3.8mm 4.2mm"><p>Een klein virtueel cadeautje sturen.</p></div>
+      <div class="card peach" style="padding:3.8mm 4.2mm"><p>De gezamenlijke trofeeënkast bekijken.</p></div>
+      <div class="card blue" style="padding:3.8mm 4.2mm"><p>Vanuit het huisje een minigame-uitdaging versturen.</p></div>
+      <div class="card pink" style="padding:3.8mm 4.2mm"><p>Meedoen aan themaweken en inrichtingswedstrijden.</p></div>
+    </div>
+    <div class="grid g2">
+      <div class="card outline"><h3>Jullie bepalen wie er langskomt</h3><p>Alleen jullie zelf, uitgenodigde vrienden of — wanneer die functie wordt aangeboden — een bredere community.</p></div>
+      <div class="card outline"><h3>Privé blijft privé</h3><p>Persoonlijke relatievragen, stemming en intieme informatie blijven gescheiden van wat bezoekers in het huisje zien.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12. SAMEN VS SAMEN -->
+<section class="page">
+  <div class="eyebrow">Samen vs. Samen</div>
+  <h1>Twee koppels tegen elkaar</h1>
+  <p class="lede"><strong>Vier spelers. Twee teams. Eén gezamenlijke overwinning.</strong> Bevriende stellen die allebei Samen Couples Plus gebruiken, kunnen het tegen elkaar opnemen.</p>
+  <div class="content">
+    <div class="card lav" style="padding:6mm">
+      <div class="grid g2" style="gap:8mm">
+        <div class="card pink" style="text-align:center;padding:5mm"><h3 class="big">Jullie team</h3><div style="font-size:30pt;font-weight:900;color:var(--plum);line-height:1.2">850</div><div class="tag" style="color:var(--muted)">Teampoints</div></div>
+        <div class="card mint" style="text-align:center;padding:5mm"><h3 class="big">Vriendenteam</h3><div style="font-size:30pt;font-weight:900;color:var(--plum);line-height:1.2">720</div><div class="tag" style="color:var(--muted)">Teampoints</div></div>
+      </div>
+      <div style="text-align:center;margin-top:3.5mm"><span class="chip">2 TEGEN 2</span></div>
+    </div>
+    <h2>Spelvormen</h2>
+    <div class="grid g3">
+      <div class="card pink"><h3>Live Clash</h3><p>Vier telefoons, live scores en korte duelrondes.</p></div>
+      <div class="card mint"><h3>Ken je koppel?</h3><p>Welk duo kent zijn eigen partner het beste?</p></div>
+      <div class="card peach"><h3>Teamwork Challenge</h3><p>Samen een puzzel of spelopdracht oplossen.</p></div>
+    </div>
+    <div class="grid g2">
+      <div class="card lav"><h3>Vriendenleague</h3><p>Een besloten klassement met een wisselbeker.</p></div>
+      <div class="card blue"><h3>Couples Tournament</h3><p>Een weekend- of maandcompetitie met meerdere bevriende stellen.</p></div>
+    </div>
+    <div class="card outline">
+      <p>De winnaars verdienen bijvoorbeeld een speciale trofee, outfit of thema-item. Stellen kunnen onderling ook een gezellige real-life beloning afspreken — zoals dat het andere stel de volgende spelletjesavond organiseert.</p>
+    </div>
+    <div class="callout push">Zo wordt Samen een sociale game die je ook met vrienden wilt delen.</div>
+  </div>
+</section>
+
+<!-- 13. SINGLES -->
+<section class="page">
+  <div class="eyebrow">Samen Singles</div>
+  <h1>Serieuze verbinding voor volwassenen</h1>
+  <p class="lede">Samen Singles is bedoeld voor mensen die echt op zoek zijn naar een duurzame relatie.</p>
+  <div class="content">
+    <div class="card pink" style="padding:6mm">
+      <p style="font-size:10.5pt;color:var(--ink)"><strong>Het vertrekpunt is een persoonlijk Kompas</strong> met levensdoelen, waarden, toekomstwensen, kinderwens, dagelijkse gewoontes, humor, interesses en verwachtingen.</p>
+    </div>
+    <h2>Hoe een ontmoeting werkt</h2>
+    <div class="stack" style="gap:3mm">
+      <div class="card lav step"><div class="num">1</div><div><h3>Stel je Kompas samen</h3><p>Vul je persoonlijke Kompas en relatie-intenties in.</p></div></div>
+      <div class="card mint step"><div class="num">2</div><div><h3>Ontdek passende kandidaten</h3><p>Een beperkt aantal voorstellen, met uitleg over de overeenkomsten.</p></div></div>
+      <div class="card peach step"><div class="num">3</div><div><h3>Maak kennis</h3><p>Via vragen en gezamenlijke minigames.</p></div></div>
+      <div class="card blue step"><div class="num">4</div><div><h3>Praat verder</h3><p>Als jullie allebei nieuwsgierig zijn.</p></div></div>
+      <div class="card pink step"><div class="num">5</div><div><h3>Ontmoet elkaar in het echt</h3><p>Plan bij wederzijdse interesse een ontmoeting in het echte leven.</p></div></div>
+    </div>
+    <div class="card outline">
+      <p>De app helpt mensen inhoudelijke overeenkomsten, verschillen en echte gespreksonderwerpen te ontdekken. Het speelse contact laat ook ervaren hoe je met elkaar communiceert en samenwerkt. Foto's en andere profielgegevens worden gedeeld volgens de keuzes van de gebruiker.</p>
+    </div>
+    <div class="callout push">Mensen ontmoeten elkaar eerst als persoonlijkheid. Humor, warmte en nieuwsgierigheid doen de rest.</div>
+  </div>
+</section>
+
+<!-- 14. SAMEN PLEIN -->
+<section class="page">
+  <div class="eyebrow">Het Samen Plein</div>
+  <h1>Een virtuele ontmoetingswereld</h1>
+  <p class="lede">Geïnspireerd door de gezellige sociale wereld van Habbo Hotel ontstaat een moderne virtuele ontmoetingsplek voor volwassenen. Je bezoekt deze wereld met je eigen herkenbare avatar.</p>
+  <div class="content">
+    <div class="img" style="height:92mm"><img src="assets/img/plein.jpg" alt=""></div>
+    <div class="grid g2">
+      <div class="card pink"><h3>Het Café</h3><p>In een ontspannen omgeving nieuwe mensen ontmoeten.</p></div>
+      <div class="card lav"><h3>De Spelhal</h3><p>Minigames starten met andere singles of stellen.</p></div>
+      <div class="card mint"><h3>De Gesprekskamer</h3><p>Meer persoonlijke vragen stellen en iemand beter leren kennen.</p></div>
+      <div class="card peach"><h3>Het Park</h3><p>Rondlopen, praten en aan activiteiten deelnemen.</p></div>
+    </div>
+    <div class="card blue"><h3>Events en thema-avonden</h3><p>Bijvoorbeeld een spelletjesavond of een bijeenkomst rond gedeelde interesses. Gezellig, verzorgd en levendig, met aandacht voor een respectvolle en veilige community.</p></div>
+    <div class="callout push">Het Samen Plein brengt online ontmoeting en echte verbinding bij elkaar.</div>
+  </div>
+</section>
+
+<!-- 15. VAN SINGLE NAAR STEL -->
+<section class="page">
+  <div class="eyebrow">Van single naar stel</div>
+  <h1>Twee avatars worden een team</h1>
+  <p class="lede">Wanneer twee singles elkaar vinden, kunnen ze hun afzonderlijke accounts aan elkaar koppelen en samen overstappen naar Samen Couples.</p>
+  <div class="content">
+    <div class="card pink step" style="padding:6mm"><div class="num">1</div><div><h3 class="big">Ontdekken</h3><p>Passende mensen leren kennen via het Kompas.</p></div></div>
+    <div class="arrow">↓</div>
+    <div class="card lav step" style="padding:6mm"><div class="num">2</div><div><h3 class="big">Samen spelen</h3><p>Minigames, vragen en ontmoetingen.</p></div></div>
+    <div class="arrow">↓</div>
+    <div class="card mint step" style="padding:6mm"><div class="num">3</div><div><h3 class="big">Afspreken</h3><p>Elkaar ook buiten de app leren kennen.</p></div></div>
+    <div class="arrow">↓</div>
+    <div class="card peach step" style="padding:6mm"><div class="num">4</div><div><h3 class="big">Verbinden</h3><p>Gezamenlijk een huisje bouwen en samen verder spelen.</p></div></div>
+    <div class="card outline">
+      <p>Ieders persoonlijke avatar, favoriete items en eigen voortgang kunnen mee naar de gedeelde wereld. Vanuit het gezamenlijke huis starten de dagelijkse check-ins, het Kompas en alle koppelactiviteiten.</p>
+    </div>
+    <div class="callout push">Zo groeit de app mee van de eerste kennismaking naar een langdurige relatie.</div>
+  </div>
+</section>
+
+<!-- 16. NEW CHAPTER -->
+<section class="page">
+  <div class="eyebrow">Samen New Chapter</div>
+  <h1>Je eigen verhaal blijft van jou</h1>
+  <p class="lede">Verandert de relatie, dan blijft het persoonlijke account van iedere partner bestaan.</p>
+  <div class="content">
+    <div class="card mint" style="padding:6mm">
+      <p style="font-size:10.5pt;color:var(--ink)">Het Samen Kompas kan helpen om opnieuw bewust te bekijken welke levensdoelen en relatiebehoeften belangrijk zijn. Wie later weer wil daten, kiest zelf welke actuele persoonlijke gegevens en voorkeuren opnieuw voor matching worden gebruikt.</p>
+    </div>
+    <h2>Persoonlijke regie</h2>
+    <div class="grid g2">
+      <div class="card pink" style="min-height:34mm"><h3>Mijn gegevens</h3><p>Zelf ingevoerde interesses, persoonlijke voorkeuren, eigen avatar en voortgang blijven van jou.</p></div>
+      <div class="card lav" style="min-height:34mm"><h3>Ons gedeelde verhaal</h3><p>Gedeelde herinneringen en gesprekken hebben afzonderlijke regels voor toegang en beheer.</p></div>
+      <div class="card mint" style="min-height:34mm"><h3>Mijn nieuwe keuze</h3><p>Je bepaalt zelf welke eigenschappen je opnieuw voor matching wilt inzetten.</p></div>
+      <div class="card peach" style="min-height:34mm"><h3>Mijn privacy</h3><p>Zo heeft ieder regie over het eigen verhaal en de eigen privacy.</p></div>
+    </div>
+    <div class="callout push">Een nieuw begin, met meer inzicht in jezelf en ruimte om opnieuw verbinding te vinden.</div>
+  </div>
+</section>
+
+<!-- 17. AFTER DARK -->
+<section class="page">
+  <div class="eyebrow">After Dark</div>
+  <h1>Een eigen soort humor</h1>
+  <p class="lede">Samen bevat een optionele 18+-modus voor stellen, met romantische vragen, flirterige uitdagingen, fantasieën en humor die helemaal bij het koppel past.</p>
+  <div class="content">
+    <div class="card dark" style="padding:7mm">
+      <div class="tag" style="color:#f6c9dc">After Dark</div>
+      <p style="font-size:14pt;line-height:1.4;margin-top:4mm"><strong>De oorspronkelijke grap over een sticker wordt een verzamelobject in het huisje.</strong></p>
+      <div class="grid g2" style="margin-top:6mm">
+        <div class="card" style="background:rgba(255,255,255,.14)"><h3 style="color:#fff">De Mondige Medaille</h3><p>Een gouden, ondeugend pronkstuk voor het huisje.</p></div>
+        <div class="card" style="background:rgba(255,255,255,.14)"><h3 style="color:#fff">Olympisch Matrasworstelen</h3><p>Een grappige minitrofee voor de prijzenkast.</p></div>
+      </div>
+    </div>
+    <h2>Drie instelbare sferen</h2>
+    <div class="grid g3">
+      <div class="card pink" style="min-height:34mm"><h3>Romantisch</h3><p>Lieve vragen, warme decoraties en intieme verrassingen.</p></div>
+      <div class="card lav" style="min-height:34mm"><h3>Flirterig</h3><p>Speelse opdrachten, ondeugende vragen en grappige uitdagingen.</p></div>
+      <div class="card mint" style="min-height:34mm"><h3>Ongegeneerd fout</h3><p>Ondeugende humor, bijzondere titels en hilarische decoratie.</p></div>
+    </div>
+    <div class="card outline">
+      <p>Beide partners bepalen samen welke volwassen onderwerpen en spelvormen ze willen gebruiken. De persoonlijke wensen en privé-informatie blijven onder hun eigen controle.</p>
+    </div>
+    <div class="callout push">En ja: die verdiende sticker wordt nu een heuse decoratie voor ons huisje. ;-)</div>
+  </div>
+</section>
+
+<!-- 18. VERDIENMODEL -->
+<section class="page">
+  <div class="eyebrow">Verdienmodel</div>
+  <h1>Eén aankoop voor twee</h1>
+  <p class="lede">Bewust toegankelijk: een complete basisapp voor twee mensen, met optionele extra's voor liefhebbers.</p>
+  <div class="content">
+    <div class="grid g2" style="gap:5mm">
+      <div class="card pink" style="padding:6mm">
+        <div class="tag">Samen Couples</div>
+        <div style="font-size:26pt;font-weight:900;color:var(--ink);margin-top:3mm;line-height:1.1">€ 9,99</div>
+        <p class="small">eenmalig per koppel</p>
+        <ul class="dots" style="margin-top:3mm">
+          <li>Twee accounts</li><li>LoveGotchi en eigen huisje</li><li>Check-ins en Kompas</li>
+          <li>Basisgesprekskaarten en minigames</li><li>Beloningen en vrijspeelbare inrichting</li>
+        </ul>
+      </div>
+      <div class="card lav" style="padding:6mm">
+        <div class="tag">Samen Couples Plus</div>
+        <div style="font-size:26pt;font-weight:900;color:var(--ink);margin-top:3mm;line-height:1.1">€ 19,99</div>
+        <p class="small">per jaar per koppel, boven op Basis</p>
+        <ul class="dots" style="margin-top:3mm">
+          <li>Huisjes van andere koppels bezoeken</li><li>2-tegen-2-duels en vriendenleague</li><li>Extra games en themakamers</li>
+          <li>Speciale decoraties</li><li>Evenementen</li>
+        </ul>
+      </div>
+    </div>
+    <h2>Voor serieuze singles</h2>
+    <div class="grid g2" style="gap:5mm">
+      <div class="card mint"><h3>Samen Singles — gratis</h3><p>Eigen profiel, een selectie passende ontmoetingen en kennismakingsspelletjes.</p></div>
+      <div class="card peach"><h3>Samen Singles Plus</h3><p><strong>€ 4,99 per maand of € 29,99 per jaar</strong> — extra ontmoetingsmogelijkheden, uitgebreidere filters, extra minigames en evenementen.</p></div>
+    </div>
+    <div class="card outline" style="padding:6mm">
+      <p><strong>Belangrijk principe:</strong> één partner kan Samen Couples kopen en de ander gratis uitnodigen. Beide partners hebben daarna toegang tot de volledige basiservaring. Die blijft ook zonder Plus langdurig leuk en bruikbaar.</p>
+      <p class="small" style="margin-top:3mm">Alle bedragen zijn conceptprijzen die voor de lancering worden getest en eventueel aangepast.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 19. VEILIGHEID -->
+<section class="page">
+  <div class="eyebrow">Veiligheid, vertrouwen en persoonlijke regie</div>
+  <h1>Vertrouwen vanaf het eerste ontwerp</h1>
+  <p class="lede">Omdat Samen over relaties, emoties en soms zeer persoonlijke onderwerpen gaat, zijn vertrouwen en privacy vanaf het eerste ontwerp belangrijk.</p>
+  <div class="content">
+    <div class="grid g2">
+      <div class="card pink step"><div class="num">1</div><div><h3>Eigen account</h3><p>Ieder heeft een eigen account en controle over het eigen profiel.</p></div></div>
+      <div class="card lav step"><div class="num">2</div><div><h3>Bewust delen</h3><p>Antwoorden uit het Kompas worden alleen met de partner gedeeld volgens duidelijke keuzes.</p></div></div>
+      <div class="card mint step"><div class="num">3</div><div><h3>Extra afgeschermd</h3><p>Intimiteit en fantasieën krijgen extra afgeschermde instellingen.</p></div></div>
+      <div class="card peach step"><div class="num">4</div><div><h3>Instelbaar sociaal</h3><p>Huizenbezoeken en vriendschappen zijn instelbaar.</p></div></div>
+      <div class="card blue step"><div class="num">5</div><div><h3>Veilige ontmoetingen</h3><p>Dating en publieke ruimtes krijgen leeftijds- en profielcontroles, moderatie en mogelijkheden om te blokkeren of te melden.</p></div></div>
+      <div class="card pink step"><div class="num">6</div><div><h3>Zorgvuldig beheer</h3><p>Gegevens worden beheerd met aandacht voor de AVG en de regels van de appstores.</p></div></div>
+    </div>
+    <div class="card lav step"><div class="num">7</div><div><h3>Netjes ontkoppelen</h3><p>Bij het ontkoppelen van accounts blijven persoonlijke gegevens gescheiden van gezamenlijke gegevens.</p></div></div>
+    <div class="callout push">Een gezellige wereld waarin gebruikers graag verblijven en vertrouwen hebben in het delen van persoonlijke informatie.</div>
+  </div>
+</section>
+
+<!-- 20. ONTWIKKELPAD -->
+<section class="page">
+  <div class="eyebrow">Ontwikkelpad</div>
+  <h1>Eerst de magie voor twee, dan de wereld</h1>
+  <p class="lede">Een groeipad waarin elk nieuw onderdeel voortbouwt op een sterke en gezellige basiservaring.</p>
+  <div class="content">
+    <div class="card pink" style="padding:6mm"><span class="chip">FASE 1</span><h3 class="big" style="margin-top:3mm">Samen Couples</h3><p>De eerste complete koppelervaring: check-ins, het Kompas, gesprekskaarten, avatars, huisje, basisinrichting, beloningen en de eerste minigames.</p></div>
+    <div class="card lav" style="padding:6mm"><span class="chip">FASE 2</span><h3 class="big" style="margin-top:3mm">Samen Social &amp; Couples Plus</h3><p>Bevriend raken met andere koppels, elkaars huisjes bezoeken, 2-vs-2-minigames, besloten competities, extra decoraties en evenementen.</p></div>
+    <div class="card mint" style="padding:6mm"><span class="chip">FASE 3</span><h3 class="big" style="margin-top:3mm">Samen Singles</h3><p>Persoonlijk matchen op basis van inhoud, kennismakingsspelletjes en het Samen Plein. Singles kunnen uiteindelijk als koppel hun accounts koppelen en in dezelfde vertrouwde app doorgroeien.</p></div>
+    <div class="card outline" style="padding:6mm">
+      <h3>Later uitbreidbaar</h3>
+      <div class="chips" style="margin-top:2.5mm">
+        <span class="chip" style="background:var(--pink)">Nieuwe minigames</span><span class="chip" style="background:var(--lav)">Themakamercollecties</span>
+        <span class="chip" style="background:var(--mint)">Seizoensuitdagingen</span><span class="chip" style="background:var(--peach)">Verdiepende gespreksreeksen</span>
+        <span class="chip" style="background:var(--blue)">Sociale evenementen</span><span class="chip" style="background:var(--pink)">Verbeterde persoonlijke suggesties</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 21. VOOR ANNELIEKE -->
+<section class="page">
+  <div class="eyebrow">Voor Annelieke</div>
+  <h1>Zullen we dit samen verder dromen?</h1>
+  <p class="lede">Het mooiste aan dit idee is dat het uit onze eigen gesprekken komt: de liefdestaalkaarten die we ooit speelden, de wens om elkaar beter te blijven begrijpen en vooral de gekke grappen die we samen maken.</p>
+  <div class="content">
+    <div class="row">
+      <div class="img" style="width:72mm;height:100mm;flex:none"><img src="assets/img/koppel-bank-portret.jpg" alt="" style="object-position:top"></div>
+      <div class="card pink grow" style="padding:6mm">
+        <h3 class="big" style="color:var(--plum);letter-spacing:.03em">WAT VIND JIJ?</h3>
+        <ol style="list-style:none;margin-top:2mm">
+          <li style="padding:2.1mm 0;border-bottom:.3mm solid #efc9d5"><strong>1.</strong>&nbsp; Welke functie zou jij het liefst meteen gebruiken?</li>
+          <li style="padding:2.1mm 0;border-bottom:.3mm solid #efc9d5"><strong>2.</strong>&nbsp; Welke minigames lijken jou het leukste om samen te spelen?</li>
+          <li style="padding:2.1mm 0;border-bottom:.3mm solid #efc9d5"><strong>3.</strong>&nbsp; Hoe zou ons digitale huisje eruit moeten zien?</li>
+          <li style="padding:2.1mm 0;border-bottom:.3mm solid #efc9d5"><strong>4.</strong>&nbsp; Welke vragen moeten absoluut in het Kompas en de gesprekskaarten?</li>
+          <li style="padding:2.1mm 0;border-bottom:.3mm solid #efc9d5"><strong>5.</strong>&nbsp; Welke grappige achievements of decoraties zou jij bedenken?</li>
+          <li style="padding:2.1mm 0"><strong>6.</strong>&nbsp; Wat zou jij nog aan het idee willen toevoegen?</li>
+        </ol>
+      </div>
+    </div>
+    <div class="card outline" style="padding:6mm">
+      <h3 style="color:var(--ink)">Mijn favoriete gedachte</h3>
+      <p style="font-size:11pt;margin-top:2mm;color:var(--ink)">Wat begon met een gesprekskaart, een grappige opmerking over een sticker en het idee van een digitaal huisdiertje, is nu een hele wereld waarin mensen elkaar kunnen ontmoeten, samen kunnen lachen en elkaar ook na jaren blijven verrassen.</p>
+    </div>
+    <div class="callout" style="font-size:13pt">Samen — omdat liefde ook gewoon heel erg leuk mag zijn. <svg class="heart" style="width:4.5mm;height:4.5mm"><use href="#h"/></svg></div>
+    <p class="small push">Conceptdocument voor bespreking en verdere ontwikkeling. De illustraties zijn visuele concepten; definitieve appschermen en functionaliteiten worden tijdens de ontwikkeling vastgesteld.</p>
+  </div>
+</section>
+
+<script>
+  // Footer with page numbering on every page except the cover
+  const pages = document.querySelectorAll('.page');
+  const total = String(pages.length).padStart(2, '0');
+  pages.forEach((p, i) => {
+    if (p.hasAttribute('data-nofooter')) return;
+    const f = document.createElement('div');
+    f.className = 'footer';
+    f.innerHTML = `<span>Samen &nbsp;/&nbsp; Van eerste klik tot blijvende verbinding</span><span>${String(i + 1).padStart(2, '0')} &nbsp;/&nbsp; ${total}</span>`;
+    p.appendChild(f);
+  });
+</script>
+</body>
+</html>
