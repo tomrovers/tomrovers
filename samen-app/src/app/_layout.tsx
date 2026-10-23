@@ -28,6 +28,7 @@ function Navigator() {
         <Stack.Screen name="beloningen" />
         <Stack.Screen name="avatar" />
         <Stack.Screen name="instellingen" />
+        <Stack.Screen name="afterdark" />
       </Stack.Protected>
     </Stack>
   );

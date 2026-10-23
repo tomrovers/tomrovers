@@ -4,7 +4,7 @@ import type { LoveLanguage, LoveLanguageScores, Need } from './types';
 // they noticed it, and only then do you both earn points: the app rewards that the
 // other person felt seen, not that a box was ticked.
 
-export type Mission = { id: string; title: string; detail: string; lang: LoveLanguage; needs: Need[]; minutes: number };
+export type Mission = { id: string; title: string; detail: string; lang: LoveLanguage; needs: Need[]; minutes: number; /** After Dark mood it needs; absent for everyday acts. */ ad?: 1 | 2 | 3 };
 
 export const missions: Mission[] = [
   // Qualitytime
@@ -33,6 +33,13 @@ export const missions: Mission[] = [
   { id: 'ca-lekkers', title: 'Iets lekkers meenemen', detail: 'Neem iets kleins mee waarvan je weet dat je partner het lekker vindt.', lang: 'cadeautjes', needs: ['gezelligheid', 'aandacht'], minutes: 5 },
   { id: 'ca-bloem', title: 'Een bloem of plantje', detail: 'Eén bloem is genoeg. Het gaat om het gebaar.', lang: 'cadeautjes', needs: ['aandacht'], minutes: 10 },
   { id: 'ca-liedje', title: 'Een liedje voor jou', detail: 'Stuur een nummer dat je aan je partner doet denken, met één zin waarom.', lang: 'cadeautjes', needs: ['aandacht', 'ruimte'], minutes: 2 },
+  // After Dark (only when both switched it on)
+  { id: 'ad-fluister', title: 'Fluister iets liefs', detail: 'Fluister iets liefs in het oor van je partner, op een onverwacht moment.', lang: 'woorden', needs: ['intimiteit', 'aandacht'], minutes: 1, ad: 1 },
+  { id: 'ad-kaarsjes', title: 'Kaarsjes aan vanavond', detail: 'Maak het vanavond sfeervol: kaarsjes, een muziekje, de telefoons weg.', lang: 'qualitytime', needs: ['intimiteit', 'gezelligheid'], minutes: 5, ad: 1 },
+  { id: 'ad-zoen', title: 'Een zoen die blijft hangen', detail: 'Geef een zoen die net iets langer duurt dan normaal.', lang: 'aanraking', needs: ['intimiteit', 'aandacht'], minutes: 1, ad: 1 },
+  { id: 'ad-berichtje', title: 'Een flirterig berichtje', detail: 'Stuur overdag een berichtje waar je partner even van moet blozen.', lang: 'woorden', needs: ['intimiteit', 'aandacht'], minutes: 1, ad: 2 },
+  { id: 'ad-aantrekkelijk', title: 'Zeg wat je aantrekkelijk vindt', detail: 'Vertel concreet wat je vandaag aantrekkelijk vindt aan je partner.', lang: 'woorden', needs: ['intimiteit', 'aandacht'], minutes: 1, ad: 2 },
+  { id: 'ad-uitnodiging', title: 'Een ondeugende uitnodiging', detail: 'Doe een speels voorstel voor later vanavond. Een nee is ook goed.', lang: 'qualitytime', needs: ['intimiteit'], minutes: 2, ad: 3 },
   { id: 'ca-foto', title: 'Een foto van ons', detail: 'Zoek een leuke foto van jullie op en stuur of print die.', lang: 'cadeautjes', needs: ['gezelligheid', 'aandacht'], minutes: 5 },
 ];
 
@@ -53,10 +60,19 @@ function seeded(seed: string) {
  * Three suggestions for today, tuned to what the partner values (their love languages)
  * and what they said they need today. `round` gives a fresh set when you ask for other options.
  */
-export function missionOptions(day: string, me: string, round: number, partnerLang?: LoveLanguageScores, partnerNeed?: Need, recent: string[] = []): Mission[] {
+export function missionOptions(
+  day: string,
+  me: string,
+  round: number,
+  partnerLang?: LoveLanguageScores,
+  partnerNeed?: Need,
+  recent: string[] = [],
+  /** 0 when After Dark is off; otherwise the mood both agreed on. */
+  adLevel = 0,
+): Mission[] {
   const rand = seeded(`${day}:${me}:${round}`);
   const scored = missions
-    .filter(m => !recent.includes(m.id))
+    .filter(m => !recent.includes(m.id) && (m.ad ?? 0) <= adLevel)
     .map(m => ({
       m,
       score: 1 + (partnerLang ? partnerLang[m.lang] : 3) + (partnerNeed && m.needs.includes(partnerNeed) ? 4 : 0) + rand() * 3,

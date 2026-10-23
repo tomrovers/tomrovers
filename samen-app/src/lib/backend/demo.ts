@@ -1,5 +1,6 @@
 import { kjmRoundQuestions } from '../content';
 import { kindById } from '../house/catalog';
+import { adStickers, wishes } from '../afterdark';
 import { missions } from '../missions';
 import { besideItem, blockedTiles, freeTile, roomItems, tilesOf, type HouseLayout, type Presence } from '../house/layout';
 import { dayKey } from '../state';
@@ -24,6 +25,7 @@ const cardAnswers: Record<string, string[]> = {
   communicatie: ['Even een knuffel, en daarna pas praten.', 'Dat je eerst luistert voordat je oplossingen geeft.', 'Een rustig moment op de bank.'],
   dromen: ['Samen een roadtrip door Schotland.', 'Een huisje met een grote tuin.', 'Ooit een maand op reis zonder planning.'],
   intimiteit: ['Lekker tegen elkaar aan liggen op de bank.', 'Als je mijn hand pakt als we buiten lopen.', 'Een avond met alleen ons tweetjes.'],
+  afterdark: ['Dat vertel ik je vanavond wel… 😏', 'Als je me zo aankijkt als gisteren.', 'Ons bed zou vooral heel hard lachen.'],
 };
 
 type Stored = { coupleId: string | null; events: SamenEvent[] };
@@ -185,6 +187,21 @@ export class DemoBackend implements Backend {
     if (sealKey && this.partnerHas(sealKey)) return;
 
     switch (event.type) {
+      case 'ad.optin':
+        // Sam is always in, at the boldest mood; the mildest of the two choices applies.
+        if (event.payload.on && !this.data.events.some(e => e.authorId === PARTNER && e.type === 'ad.optin')) {
+          this.later(1500, () => this.add(PARTNER, { type: 'ad.optin', payload: { on: true, level: 3 }, visibility: 'public' }));
+          this.later(6000, () => this.add(PARTNER, { type: 'ad.award', payload: { sticker: pick(adStickers).id, to: ME }, visibility: 'public' }));
+        }
+        break;
+      case 'ad.wish': {
+        const w = wishes.find(x => x.id === event.payload.wishId);
+        if (w) this.later(1200, () => this.add(PARTNER, { type: 'ad.wish', payload: { wishId: w.id, answer: pick(['ja', 'ja', 'misschien', 'nee']) }, visibility: 'sealed', sealKey }));
+        break;
+      }
+      case 'ad.award':
+        this.later(2000, () => this.add(PARTNER, { type: 'ad.accept', payload: { awardId: id, accept: true }, visibility: 'public' }));
+        break;
       case 'mission.done':
         this.later(3000, () => this.add(PARTNER, { type: 'mission.seen', payload: { doneId: id }, visibility: 'public' }));
         break;
@@ -207,7 +224,7 @@ export class DemoBackend implements Backend {
         break;
       }
       case 'card.answer': {
-        const theme = event.payload.cardId.split('-')[0];
+        const theme = event.payload.cardId.startsWith('ad') ? 'afterdark' : event.payload.cardId.split('-')[0];
         const text = pick(cardAnswers[theme] ?? cardAnswers.liefde);
         this.later(2000, () => this.add(PARTNER, { type: 'card.answer', payload: { cardId: event.payload.cardId, text }, visibility: 'sealed', sealKey }));
         break;

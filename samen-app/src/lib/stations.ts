@@ -21,6 +21,8 @@ export type Station = {
   houseSpot: string;
   /** A short note when something is waiting for you here. */
   waiting?: (s: CoupleState) => string | null;
+  /** Shown in the night look of After Dark. */
+  dark?: boolean;
 };
 
 export const stations: Station[] = [
@@ -63,6 +65,23 @@ export const stations: Station[] = [
     route: '/beloningen',
     houseSpot: 'de cadeautafel',
     waiting: s => (s.openWins.some(w => w.winnerId === s.myId) ? 'Kies je beloning' : null),
+  },
+  {
+    id: 'afterdark',
+    title: 'After Dark',
+    blurb: 'Flirten, wensen en ondeugende stickers · 18+',
+    emoji: '😈',
+    tone: 'lav',
+    dark: true,
+    route: '/afterdark',
+    houseSpot: 'de slaapkamerdeur, die alleen samen opengaat',
+    waiting: s => {
+      const ad = s.afterDark;
+      if (!ad.active) return ad.mine?.on ? 'Staat aan voor jou' : null;
+      if (ad.awards.some(a => a.to === s.myId && a.status === 'open')) return 'Er wacht een sticker op je';
+      if (Object.entries(s.cards).some(([id, c]) => id.startsWith('ad') && c.partnerDone && !c.mine)) return 'Er wacht een antwoord op jou';
+      return null;
+    },
   },
   {
     id: 'prestaties',

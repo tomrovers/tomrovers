@@ -55,7 +55,7 @@ export default function Vandaag() {
 
   const { mine, partner, partnerDone } = state.today;
   const recent = state.acts.filter(a => a.by === state.myId).slice(0, 5).map(a => a.missionId);
-  const options = missionOptions(state.today.day, state.myId, round, state.loveLang.partner, partner?.need, recent);
+  const options = missionOptions(state.today.day, state.myId, round, state.loveLang.partner, partner?.need, recent, state.afterDark.active ? state.afterDark.level : 0);
   const picked = state.mission.picked ? missionById.get(state.mission.picked) : undefined;
   const done = state.mission.done;
   const doneMission = done && missionById.get(done.missionId);
@@ -279,11 +279,15 @@ export default function Vandaag() {
         {stations.map(st => {
           const waiting = st.waiting?.(state);
           return (
-            <Pressable key={st.id} onPress={() => router.push(st.route)} style={({ pressed }) => [styles.station, { backgroundColor: tones[st.tone] }, pressed && { opacity: 0.8 }]} accessibilityRole="button">
+            <Pressable
+              key={st.id}
+              onPress={() => router.push(st.route)}
+              style={({ pressed }) => [styles.station, { backgroundColor: st.dark ? '#33203B' : tones[st.tone] }, pressed && { opacity: 0.8 }]}
+              accessibilityRole="button">
               <Text style={{ fontSize: 26 }}>{st.emoji}</Text>
-              <Strong>{st.title}</Strong>
-              <Small>{st.blurb}</Small>
-              {waiting && <Text style={styles.waiting}>● {waiting}</Text>}
+              <Strong style={st.dark && { color: '#F7E9F0' }}>{st.title}</Strong>
+              <Small style={st.dark && { color: '#C7AFC9' }}>{st.blurb}</Small>
+              {waiting && <Text style={[styles.waiting, st.dark && { color: '#FF7AA8' }]}>● {waiting}</Text>}
             </Pressable>
           );
         })}

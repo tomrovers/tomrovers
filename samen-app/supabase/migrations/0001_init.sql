@@ -34,7 +34,8 @@ create table public.events (
 );
 
 create index events_couple_created on public.events (couple_id, created_at);
-create unique index events_one_sealed_per_key on public.events (couple_id, author_id, seal_key) where visibility = 'sealed';
+-- One sealed answer per question; After Dark wishes may be changed, the latest answer counts.
+create unique index events_one_sealed_per_key on public.events (couple_id, author_id, seal_key) where visibility = 'sealed' and type <> 'ad.wish';
 
 -- Helpers -----------------------------------------------------------------------------------------
 

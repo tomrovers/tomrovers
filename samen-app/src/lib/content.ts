@@ -1,5 +1,6 @@
 import type { CardTone } from '@/theme';
 
+import { adCards } from './afterdark';
 import type { GestureKind, LoveLanguage, Mood, Need } from './types';
 
 export const moods: { id: Mood; label: string; emoji: string }[] = [
@@ -152,3 +153,8 @@ export const achievements: Achievement[] = [
 ];
 
 export const randomCompliment = () => complimentIdeas[Math.floor(Math.random() * complimentIdeas.length)];
+
+/** Every conversation card, the After Dark ones included (those are only shown when it is on). */
+export const allCards: Card[] = [...cards, ...adCards];
+
+export const afterDarkTheme = { id: 'afterdark', label: 'After Dark', tone: 'lav' as CardTone };

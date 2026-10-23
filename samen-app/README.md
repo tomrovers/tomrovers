@@ -13,6 +13,7 @@ zodat één codebase werkt op iPhone, Android en het web.
 | **Koppelen** | Een koppelcode van 6 tekens maken of invullen. Of de demo proberen met een gesimuleerde partner, Sam. |
 | **Vandaag** | De dagelijkse kern op één scherm: de week in één oogopslag, je check-in, één klein gebaar voor je partner (gekozen uit drie voorstellen op basis van diens liefdestaal en behoefte), "Ik merkte het ❤️" voor wat je partner voor jou deed, en de gesprekskaart van de dag. Daaronder staan de andere plekken (zie `src/lib/stations.ts` en [FOCUS.md](FOCUS.md)). |
 | **Dagelijkse check-in** | Stemming, energie en behoefte. Na beide check-ins zie je een gedeeld dagbeeld met een voorstel voor de avond. |
+| **After Dark (18+)** | Gaat alleen open als jullie het allebei aanzetten; de mildste van jullie twee sferen (romantisch, flirterig, ongegeneerd fout) geldt, en wie het aanzet ziet niet of de ander dat al deed. Kaarten, een wensenlijst waarin je alleen de matches ziet, ondeugende stickers die de ander moet accepteren, en flirterige opdrachten in Vandaag. Alleen tekst, nooit expliciet. |
 | **Gesprekskaarten** | 25 vragen in 5 thema's. Je ziet het antwoord van je partner pas na je eigen antwoord. Inzichten kun je in het Kompas bewaren. |
 | **Ken je mij?** | Vijf vragen over jezelf, daarna raad je wat je partner koos. Na beide inzendingen volgt de uitslag. |
 | **Reflex Battle** | Op één telefoon: wie tikt het snelst als het scherm roze wordt? Best of five. |

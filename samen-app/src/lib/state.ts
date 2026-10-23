@@ -1,6 +1,7 @@
+import type { AdLevel, WishAnswer } from './afterdark';
 import {
   achievements,
-  cards,
+  allCards,
   kjmRoundQuestions,
   loveLanguages,
   type HouseItemId,
@@ -29,6 +30,18 @@ export type Gesture = { id: string; from: string; kind: GestureKind; text?: stri
 export type CompassNote = { id: string; authorId: string; theme: string; text: string; private: boolean; at: string };
 export type Reward = { id: string; title: string };
 export type DoneMission = { id: string; by: string; missionId: string; note?: string; day: string; at: string; seen: boolean };
+export type AdAward = { id: string; sticker: string; from: string; to: string; status: 'open' | 'accepted' | 'declined' };
+export type AfterDark = {
+  mine?: { on: boolean; level: AdLevel };
+  partnerOn: boolean;
+  /** Open only when both switched it on; the mildest of the two moods applies. */
+  active: boolean;
+  level: AdLevel;
+  wishes: Record<string, { mine?: WishAnswer; partner?: WishAnswer; partnerDone: boolean }>;
+  /** Wishes you both answered with ja or misschien. A partner's nee is never shown. */
+  matches: { wishId: string; both: 'ja' | 'misschien' }[];
+  awards: AdAward[];
+};
 export type WeekDay = { day: string; label: string; checkins: number; acts: number; today: boolean };
 
 export type CoupleState = {
@@ -61,6 +74,7 @@ export type CoupleState = {
   acts: DoneMission[];
   confirmedActs: number;
   week: WeekDay[];
+  afterDark: AfterDark;
   unlocked: Set<string>; // achievement ids
   items: Set<HouseItemId>;
 };
@@ -128,6 +142,7 @@ export function deriveState(all: SamenEvent[], myId: string, memberIds: string[]
     acts: [],
     confirmedActs: 0,
     week: [],
+    afterDark: { partnerOn: false, active: false, level: 1, wishes: {}, matches: [], awards: [] },
     unlocked: new Set(),
     items: new Set(),
   };
@@ -140,6 +155,8 @@ export function deriveState(all: SamenEvent[], myId: string, memberIds: string[]
   const claimsByGame = new Map<string, Claim>();
   const redeemed = new Set<string>();
   const seenActs = new Set<string>();
+  let partnerAd: { on: boolean; level: AdLevel } | undefined;
+  const awardStatus = new Map<string, 'accepted' | 'declined'>();
 
   for (const e of visible) {
     const mine = e.authorId === myId;
@@ -217,6 +234,23 @@ export function deriveState(all: SamenEvent[], myId: string, memberIds: string[]
         // Only the partner of the one who did the act can confirm it.
         if (state.acts.some(a => a.id === e.payload.doneId && a.by !== e.authorId)) seenActs.add(e.payload.doneId);
         break;
+      case 'ad.optin':
+        if (mine) state.afterDark.mine = e.payload;
+        else partnerAd = e.payload;
+        break;
+      case 'ad.wish': {
+        const w = (state.afterDark.wishes[e.payload.wishId] ??= { partnerDone: false });
+        if (mine) w.mine = e.payload.answer;
+        else w.partner = e.payload.answer;
+        break;
+      }
+      case 'ad.award':
+        state.afterDark.awards.push({ id: e.id, sticker: e.payload.sticker, from: e.authorId, to: e.payload.to, status: 'open' });
+        break;
+      case 'ad.accept':
+        // Only the one who received the sticker decides.
+        if (state.afterDark.awards.some(a => a.id === e.payload.awardId && a.to === e.authorId)) awardStatus.set(e.payload.awardId, e.payload.accept ? 'accepted' : 'declined');
+        break;
     }
   }
 
@@ -227,8 +261,21 @@ export function deriveState(all: SamenEvent[], myId: string, memberIds: string[]
   }
   state.today.partnerDone = !!state.today.partner || partnerSealedKeys.has(`checkin:${state.today.day}`);
 
+  // After Dark
+  const ad = state.afterDark;
+  ad.partnerOn = !!partnerAd?.on;
+  ad.active = !!ad.mine?.on && ad.partnerOn;
+  ad.level = Math.min(ad.mine?.level ?? 1, partnerAd?.level ?? 1) as AdLevel;
+  for (const [id, w] of Object.entries(ad.wishes)) {
+    w.partnerDone = partnerSealedKeys.has(`ad:wish:${id}`);
+    const yes = (a?: WishAnswer) => a === 'ja' || a === 'misschien';
+    if (yes(w.mine) && yes(w.partner)) ad.matches.push({ wishId: id, both: w.mine === 'ja' && w.partner === 'ja' ? 'ja' : 'misschien' });
+  }
+  for (const a of ad.awards) a.status = awardStatus.get(a.id) ?? 'open';
+  ad.awards.reverse();
+
   // Cards
-  for (const card of cards) {
+  for (const card of allCards) {
     const key = `card:${card.id}`;
     if (!partnerSealedKeys.has(key) && !state.cards[card.id]) continue;
     const c = (state.cards[card.id] ??= { partnerDone: false });

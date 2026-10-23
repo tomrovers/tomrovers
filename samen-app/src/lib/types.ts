@@ -56,7 +56,11 @@ export type EventBody =
   | { type: 'sealed.ping'; payload: { key: string } }
   | { type: 'mission.pick'; payload: { day: string; missionId: string } }
   | { type: 'mission.done'; payload: { day: string; missionId: string; note?: string } }
-  | { type: 'mission.seen'; payload: { doneId: string } };
+  | { type: 'mission.seen'; payload: { doneId: string } }
+  | { type: 'ad.optin'; payload: { on: boolean; level: 1 | 2 | 3 } }
+  | { type: 'ad.wish'; payload: { wishId: string; answer: 'ja' | 'misschien' | 'nee' } }
+  | { type: 'ad.award'; payload: { sticker: string; to: string } }
+  | { type: 'ad.accept'; payload: { awardId: string; accept: boolean } };
 
 export type EventType = EventBody['type'];
 

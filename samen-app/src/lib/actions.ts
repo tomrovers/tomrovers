@@ -61,4 +61,16 @@ export const actions = {
   pickMission: (missionId: string): NewEvent => ({ type: 'mission.pick', payload: { day: dayKey(), missionId }, visibility: 'private' }),
   missionDone: (missionId: string, note?: string): NewEvent => ({ type: 'mission.done', payload: { day: dayKey(), missionId, note }, visibility: 'public' }),
   missionSeen: (doneId: string): NewEvent => ({ type: 'mission.seen', payload: { doneId }, visibility: 'public' }),
+
+  // After Dark
+  adOptIn: (on: boolean, level: 1 | 2 | 3): NewEvent => ({ type: 'ad.optin', payload: { on, level }, visibility: 'public' }),
+  /** Sealed: the partner's answer only opens up once you answered the same wish yourself. */
+  adWish: (wishId: string, answer: 'ja' | 'misschien' | 'nee'): NewEvent => ({
+    type: 'ad.wish',
+    payload: { wishId, answer },
+    visibility: 'sealed',
+    sealKey: `ad:wish:${wishId}`,
+  }),
+  adAward: (sticker: string, to: string): NewEvent => ({ type: 'ad.award', payload: { sticker, to }, visibility: 'public' }),
+  adAccept: (awardId: string, accept: boolean): NewEvent => ({ type: 'ad.accept', payload: { awardId, accept }, visibility: 'public' }),
 };

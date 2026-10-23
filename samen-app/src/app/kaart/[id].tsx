@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Header } from '@/components/header';
 import { Body, Button, Card, Field, H2, Screen, Small, Strong } from '@/components/ui';
 import { actions } from '@/lib/actions';
-import { cards, cardThemes } from '@/lib/content';
+import { afterDarkTheme, allCards, cardThemes } from '@/lib/content';
 import { nameOf } from '@/lib/people';
 import { useCouple } from '@/lib/store';
 
@@ -16,7 +16,7 @@ export default function Kaart() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  const card = cards.find(c => c.id === id);
+  const card = allCards.find(c => c.id === id);
   if (!card) {
     return (
       <Screen>
@@ -24,7 +24,7 @@ export default function Kaart() {
       </Screen>
     );
   }
-  const theme = cardThemes.find(t => t.id === card.theme)!;
+  const theme = card.theme === 'afterdark' ? afterDarkTheme : cardThemes.find(t => t.id === card.theme)!;
   const c = state.cards[card.id];
   const partnerName = nameOf(state, state.partnerId);
 

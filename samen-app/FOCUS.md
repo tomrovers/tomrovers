@@ -14,6 +14,8 @@ Is het antwoord nee of "niet echt", dan gaat het idee naar de lijst **Later**.
 3. **Ik merkte het ❤️**: je partner bevestigt dat het aankwam. Pas dan krijgen jullie allebei punten. De app beloont dat de ander zich gezien voelt, niet het afvinken.
 4. **Gesprek van de dag**: één gesprekskaart. Wat je ontdekt, kun je bewaren in het Kompas, zodat de voorstellen steeds beter passen.
 
+**After Dark (18+)** hoort bij de kern: praten over intimiteit en wensen is ook communiceren en in elkaar investeren. Het gaat alleen open als jullie het allebei aanzetten, en de mildste van jullie twee sferen geldt. Wie het aanzet, ziet niet of de ander dat al deed. Het bevat kaarten, een wensenlijst waarin je alleen matches ziet, ondeugende stickers die de ander moet accepteren en flirterige opdrachten. Alleen tekst, speels en suggestief, nooit expliciet.
+
 Spelelementen ondersteunen de kern: een gezamenlijk level (samen, niet tegen elkaar), de week in één oogopslag zonder reeks om te verliezen, stickers, spelletjes en de beloningenpot.
 
 ## Hoe de app is opgebouwd voor later
@@ -25,5 +27,4 @@ Elk onderdeel is een **plek** in `src/lib/stations.ts`: naam, icoon, scherm, en 
 - Het huis als 3D-ruimte om doorheen te lopen, met plekken om iets te doen en kamers die je samen vrijspeelt. Een isometrische versie staat al geparkeerd in `src/app/(tabs)/thuis.tsx` en `src/components/house/`.
 - Echte 3D-avatars vanaf een foto (Avaturn is gratis; MetaPerson niet).
 - Live samen in het huis rondlopen.
-- After Dark (18+): ondeugende kaarten en stickers.
 - Samen Singles, het Samen Plein en Couples Plus.
