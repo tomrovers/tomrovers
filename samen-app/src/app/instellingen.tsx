@@ -8,7 +8,7 @@ import { nameOf } from '@/lib/people';
 import { useCouple } from '@/lib/store';
 
 export default function Instellingen() {
-  const { state, session, mode, leaveCouple } = useCouple();
+  const { state, session, mode, leaveCouple, sharedAvailable, leaveDemoForShared } = useCouple();
   const [busy, setBusy] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const partnerName = nameOf(state, state.partnerId);
@@ -42,7 +42,18 @@ export default function Instellingen() {
       <Card tone="lav">
         <H2>Jullie koppel</H2>
         {mode === 'demo' ? (
-          <Body>Je speelt de demo met Sam. Alles blijft op deze telefoon.</Body>
+          <>
+            <Body>Je speelt de demo met Sam. Alles blijft op deze telefoon.</Body>
+            {sharedAvailable && (
+              <Button
+                title="Stop de demo en begin samen"
+                onPress={async () => {
+                  await leaveDemoForShared();
+                  router.replace('/thuis');
+                }}
+              />
+            )}
+          </>
         ) : mode === 'shared' ? (
           <Body>{state.partnerId ? `Gekoppeld met ${partnerName} via deze gedeelde pagina.` : 'Je partner is nog niet aangesloten.'}</Body>
         ) : (

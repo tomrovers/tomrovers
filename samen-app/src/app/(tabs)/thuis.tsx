@@ -30,7 +30,8 @@ const routes: Record<ItemAction, Href> = {
 };
 
 export default function Thuis() {
-  const { state, session, mode, post, house, saveHouse, partnerPresence, setPresence } = useCouple();
+  const { state, session, mode, post, house, saveHouse, partnerPresence, setPresence, sharedAvailable, leaveDemoForShared } = useCouple();
+  const [switching, setSwitching] = useState(false);
   const partnerName = nameOf(state, state.partnerId);
   const face = expressions(state);
   const hasPartner = !!state.partnerId;
@@ -142,6 +143,25 @@ export default function Thuis() {
           <Icon name="settings" color={colors.plum} size={26} />
         </Pressable>
       </Row>
+
+      {mode === 'demo' && sharedAvailable && (
+        <Card tone="peach">
+          <H2>Dit is de demo met Sam</H2>
+          <Body>Sam is een nagespeelde partner. Wil je het huisje echt samen met je partner gebruiken? Stop dan de demo en begin samen op deze pagina.</Body>
+          <Button
+            title="Stop de demo en begin samen"
+            loading={switching}
+            onPress={async () => {
+              setSwitching(true);
+              try {
+                await leaveDemoForShared();
+              } finally {
+                setSwitching(false);
+              }
+            }}
+          />
+        </Card>
+      )}
 
       {!hasPartner && session.code && (
         <Card tone="peach">

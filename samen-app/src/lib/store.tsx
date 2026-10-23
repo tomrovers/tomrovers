@@ -26,6 +26,8 @@ type Store = {
   saveProfile: (profile: Profile) => Promise<void>;
   startDemo: () => Promise<void>;
   startShared: () => Promise<void>;
+  /** Ends the demo (its data is wiped) and joins the couple on this shared page. */
+  leaveDemoForShared: () => Promise<void>;
   createCouple: () => Promise<void>;
   joinCouple: (code: string) => Promise<void>;
   post: (event: NewEvent) => Promise<void>;
@@ -200,6 +202,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setEvents([]);
   }, []);
 
+  const leaveDemoForShared = useCallback(async () => {
+    await leaveCouple();
+    await startShared();
+  }, [leaveCouple, startShared]);
+
   const saveHouse = useCallback(async (roomsLayout: HouseLayout['rooms']) => {
     const layout = { rooms: roomsLayout, updatedAt: Date.now() };
     setHouse(layout);
@@ -229,6 +236,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     saveProfile,
     startDemo,
     startShared,
+    leaveDemoForShared,
     createCouple,
     joinCouple,
     post,
