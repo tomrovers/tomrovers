@@ -58,16 +58,27 @@ Zonder server-instellingen werkt alleen de demo. Voor echte koppels met twee tel
 5. Kopieer in deze map `.env.example` naar `.env` en vul beide waarden in.
 6. Start de app opnieuw met `npx expo start`. "Maak onze koppelcode" werkt nu, en je partner kan op de eigen telefoon de code invullen.
 
-## 4. Naar de App Store en Google Play
+## 4. Testversie op jullie Android-telefoons
+
+Expo bouwt de app in de cloud; je hebt er geen Android Studio voor nodig.
+
+1. Maak een gratis account op <https://expo.dev> en maak onder **Account settings → Access tokens** een token.
+2. Zorg voor de Supabase-gegevens uit stap 3. Zonder die gegevens bevat de app alleen de demo met Sam.
+3. Voer uit (met `EXPO_TOKEN`, `EXPO_PUBLIC_SUPABASE_URL` en `EXPO_PUBLIC_SUPABASE_ANON_KEY` als omgevingsvariabelen):
+   ```sh
+   ./scripts/build-android.sh
+   ```
+4. Na ongeveer 15 minuten krijg je een downloadlink. Open die op jullie Android-telefoons en sta "installeren uit onbekende bron" toe.
+
+## 5. Naar Google Play (en later de App Store)
 
 Nodig:
-- een **Apple Developer**-account (€99 per jaar) en een **Google Play Console**-account (eenmalig $25);
-- een gratis account op <https://expo.dev>. Expo bouwt de app in de cloud, dus je hebt geen Mac of Xcode nodig.
+- een **Google Play Console**-account (eenmalig $25), en voor iPhone later een **Apple Developer**-account (€99 per jaar);
+- hetzelfde expo.dev-account.
 
 ```sh
-npx eas-cli@latest login
-npx eas-cli@latest build --platform all --profile production
-npx eas-cli@latest submit --platform all
+npx eas-cli@latest build --platform android --profile production
+npx eas-cli@latest submit --platform android
 ```
 
 Let op bij Google Play: een nieuw *persoonlijk* ontwikkelaarsaccount moet de app eerst minimaal 14 dagen laten
