@@ -1,4 +1,6 @@
 import { kjmRoundQuestions } from '../content';
+import { kindById } from '../house/catalog';
+import { besideItem, blockedTiles, freeTile, roomItems, tilesOf, type HouseLayout, type Presence } from '../house/layout';
 import { dayKey } from '../state';
 import * as storage from '../storage';
 import type { AvatarConfig, CheckInPayload, NewEvent, SamenEvent } from '../types';
@@ -8,6 +10,7 @@ import type { Backend, Session } from './types';
 // pause, so every feature can be tried without a server or a second phone.
 
 const KEY = 'samen.demo.v1';
+const HOUSE_KEY = 'samen.demo.house';
 const ME = 'demo-me';
 const PARTNER = 'demo-partner';
 const COUPLE = 'demo-couple';
@@ -32,11 +35,19 @@ export class DemoBackend implements Backend {
   readonly mode = 'demo' as const;
   private data: Stored = { coupleId: null, events: [] };
   private listeners = new Set<() => void>();
+  private house: HouseLayout | null = null;
+  private houseListeners = new Set<(l: HouseLayout | null) => void>();
+  private mine: Presence | null = null;
+  private sam: Presence | null = null;
+  private presenceListeners = new Set<(p: Presence[]) => void>();
+  private wander: ReturnType<typeof setInterval> | null = null;
 
   async start(): Promise<Session> {
     try {
       const raw = await storage.load(KEY);
       if (raw) this.data = JSON.parse(raw);
+      const house = await storage.load(HOUSE_KEY);
+      if (house) this.house = JSON.parse(house);
     } catch {
       // A broken demo state simply starts fresh.
     }
@@ -99,8 +110,68 @@ export class DemoBackend implements Backend {
 
   async leaveCouple(): Promise<void> {
     this.data = { coupleId: null, events: [] };
-    await storage.remove(KEY);
+    this.house = null;
+    await Promise.all([storage.remove(KEY), storage.remove(HOUSE_KEY)]);
     this.listeners.forEach(l => l());
+  }
+
+  async loadHouse() {
+    return this.house;
+  }
+
+  async saveHouse(layout: HouseLayout) {
+    this.house = layout;
+    await storage.save(HOUSE_KEY, JSON.stringify(layout));
+    this.houseListeners.forEach(l => l(layout));
+  }
+
+  subscribeHouse(onChange: (l: HouseLayout | null) => void) {
+    this.houseListeners.add(onChange);
+    return () => {
+      this.houseListeners.delete(onChange);
+    };
+  }
+
+  setPresence(p: Presence) {
+    const moved = this.mine?.room !== p.room;
+    this.mine = p;
+    // Sam follows you into a new room after a moment.
+    if (moved) setTimeout(() => this.samWalks(), 1200);
+  }
+
+  subscribePresence(onChange: (others: Presence[]) => void) {
+    this.presenceListeners.add(onChange);
+    if (this.sam) onChange([this.sam]);
+    this.wander ??= setInterval(() => this.samWalks(), 9000);
+    return () => {
+      this.presenceListeners.delete(onChange);
+      if (!this.presenceListeners.size && this.wander) {
+        clearInterval(this.wander);
+        this.wander = null;
+      }
+    };
+  }
+
+  /** Sam strolls around the room you are in, and now and then sits down. */
+  private samWalks(toYou = false) {
+    if (!this.mine) return;
+    const items = roomItems(this.house, this.mine.room);
+    const blocked = blockedTiles(items);
+    const me = `${this.mine.gx},${this.mine.gy}`;
+    let spot: Presence = { uid: PARTNER, room: this.mine.room, gx: 0, gy: 0, seat: false, at: Date.now() };
+    const seats = items.filter(it => kindById.get(it.kind)?.seat);
+    if (toYou) {
+      const near = besideItem({ kind: 'plant', gx: this.mine.gx, gy: this.mine.gy, rot: 0 }, blocked, [this.mine.gx, this.mine.gy]);
+      if (near) spot = { ...spot, gx: near[0], gy: near[1] };
+    } else if (seats.length && Math.random() < 0.3) {
+      const free = tilesOf(pick(seats)).filter(t => t.join(',') !== me);
+      if (free.length) spot = { ...spot, gx: free[0][0], gy: free[0][1], seat: true };
+    } else {
+      const [gx, gy] = freeTile(blocked, [me]);
+      spot = { ...spot, gx, gy };
+    }
+    this.sam = spot;
+    this.presenceListeners.forEach(l => l([spot]));
   }
 
   private partnerHas(sealKey: string) {
@@ -156,6 +227,7 @@ export class DemoBackend implements Backend {
         }
         break;
       case 'gesture':
+        setTimeout(() => this.samWalks(true), 600);
         if (Math.random() < 0.5) {
           this.later(2500, () => this.add(PARTNER, { type: 'gesture', payload: { kind: pick(['hartje', 'knuffel', 'compliment']) }, visibility: 'public' }));
         }

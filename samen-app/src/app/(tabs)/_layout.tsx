@@ -19,11 +19,11 @@ export default function TabLayout() {
         tabBarStyle: { backgroundColor: colors.white, borderTopColor: colors.line },
         sceneStyle: { backgroundColor: colors.cream },
       }}>
-      <Tabs.Screen name="thuis" options={tab('Thuis', 'home')} />
+      <Tabs.Screen name="thuis" options={tab('Huisje', 'home')} />
       <Tabs.Screen name="kaarten" options={tab('Kaarten', 'cards')} />
       <Tabs.Screen name="spelen" options={tab('Spelen', 'game')} />
       <Tabs.Screen name="kompas" options={tab('Kompas', 'compass')} />
-      <Tabs.Screen name="huisje" options={tab('Huisje', 'sofa')} />
+      <Tabs.Screen name="prestaties" options={tab('Prestaties', 'trophy')} />
     </Tabs>
   );
 }

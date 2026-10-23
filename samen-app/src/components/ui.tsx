@@ -19,16 +19,19 @@ import { colors, fonts, radius, space, tones, type CardTone } from '@/theme';
 export function Screen({
   children,
   scroll = true,
+  scrollEnabled = true,
   edges = ['top'],
 }: {
   children: ReactNode;
   scroll?: boolean;
+  /** Turn off while the user drags something inside the screen. */
+  scrollEnabled?: boolean;
   edges?: Edge[];
 }) {
   return (
     <SafeAreaView style={styles.screen} edges={edges}>
       {scroll ? (
-        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" scrollEnabled={scrollEnabled}>
           <View style={styles.inner}>{children}</View>
         </ScrollView>
       ) : (

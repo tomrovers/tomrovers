@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient, type RealtimeChannel, type SupabaseClient } from '@supabase/supabase-js';
 
+import type { HouseLayout, Presence } from '../house/layout';
 import type { NewEvent, SamenEvent } from '../types';
 import { BackendError, type Backend, type Session } from './types';
 
@@ -135,5 +136,66 @@ export class SupabaseBackend implements Backend {
     const { error } = await this.client.rpc('leave_couple');
     fail(error, 'Ontkoppelen mislukt.');
     await this.refreshSession();
+  }
+
+  async loadHouse(): Promise<HouseLayout | null> {
+    const coupleId = this.current.coupleId;
+    if (!coupleId) return null;
+    const { data, error } = await this.client.from('couple_houses').select('layout').eq('couple_id', coupleId).maybeSingle();
+    fail(error, 'Kon het huisje niet ophalen.');
+    return (data?.layout as HouseLayout | undefined) ?? null;
+  }
+
+  async saveHouse(layout: HouseLayout): Promise<void> {
+    const coupleId = this.current.coupleId;
+    if (!coupleId) return;
+    const { error } = await this.client.from('couple_houses').upsert({ couple_id: coupleId, layout, updated_at: new Date().toISOString() });
+    fail(error, 'Kon het huisje niet opslaan.');
+  }
+
+  subscribeHouse(onChange: (layout: HouseLayout | null) => void) {
+    const coupleId = this.current.coupleId;
+    if (!coupleId) return () => {};
+    const channel = this.client
+      .channel(`house-${coupleId}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'couple_houses', filter: `couple_id=eq.${coupleId}` }, () => {
+        void this.loadHouse().then(onChange);
+      })
+      .subscribe();
+    return () => {
+      void this.client.removeChannel(channel);
+    };
+  }
+
+  private presenceChannel: RealtimeChannel | null = null;
+  private pendingPresence: Presence | null = null;
+
+  setPresence(p: Presence) {
+    this.pendingPresence = p;
+    void this.presenceChannel?.track(p);
+  }
+
+  subscribePresence(onChange: (others: Presence[]) => void) {
+    const coupleId = this.current.coupleId;
+    if (!coupleId) return () => {};
+    const channel = this.client.channel(`presence-${coupleId}`, { config: { presence: { key: this.current.userId } } });
+    channel
+      .on('presence', { event: 'sync' }, () => {
+        const state = channel.presenceState<Presence>();
+        onChange(
+          Object.entries(state)
+            .filter(([key]) => key !== this.current.userId)
+            .map(([, metas]) => metas[metas.length - 1])
+            .filter(Boolean) as Presence[],
+        );
+      })
+      .subscribe(status => {
+        if (status === 'SUBSCRIBED' && this.pendingPresence) void channel.track(this.pendingPresence);
+      });
+    this.presenceChannel = channel;
+    return () => {
+      this.presenceChannel = null;
+      void this.client.removeChannel(channel);
+    };
   }
 }

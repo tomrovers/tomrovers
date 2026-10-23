@@ -1,3 +1,4 @@
+import type { HouseLayout, Presence } from '../house/layout';
 import { dayKey } from '../state';
 import * as storage from '../storage';
 import type { NewEvent, SamenEvent } from '../types';
@@ -24,14 +25,21 @@ type CollectionRef = {
 };
 type Db = { doc(path: string): DocRef; collection(path: string): CollectionRef };
 type User = { id(): Promise<string | null> };
+type Peer = { isMe: boolean; presence: Record<string, unknown> };
+type Room = {
+  presence(patch: Record<string, unknown>): Promise<void>;
+  peers(): readonly Peer[];
+  onPeers(handler: (change: { peers: readonly Peer[] }) => void): () => void;
+};
 type ClaudeHost = { use(name: string): Promise<unknown> };
 
 const COUPLE = 'main';
 const LOG = `couples/${COUPLE}/log`;
+const HOUSE = `couples/${COUPLE}/house/layout`;
 const DEVICE_KEY = 'samen.shared.device';
 const LOCAL_PRIVATE_KEY = 'samen.shared.private';
 
-let handles: Promise<{ db: Db; user: User | null } | null> | null = null;
+let handles: Promise<{ db: Db; user: User | null; room: Room | null } | null> | null = null;
 
 /** Resolves the page's shared database when the app runs inside a claude.ai artifact. */
 export function detectShared() {
@@ -39,8 +47,8 @@ export function detectShared() {
     const host = (globalThis as { claude?: ClaudeHost }).claude;
     if (typeof host?.use !== 'function') return null;
     try {
-      const [db, user] = await Promise.all([host.use('db'), host.use('user')]);
-      return db ? { db: db as Db, user: (user as User | null) ?? null } : null;
+      const [db, user, room] = await Promise.all([host.use('db'), host.use('user'), host.use('room')]);
+      return db ? { db: db as Db, user: (user as User | null) ?? null, room: (room as Room | null) ?? null } : null;
     } catch {
       return null;
     }
@@ -61,6 +69,7 @@ async function deviceId(): Promise<string> {
 export class SharedBackend implements Backend {
   readonly mode = 'shared' as const;
   private db!: Db;
+  private room: Room | null = null;
   private me = '';
   private hasPrivateSpace = false;
   private shared = new Map<string, SamenEvent[]>(); // log document id -> its events
@@ -71,6 +80,7 @@ export class SharedBackend implements Backend {
     const h = await detectShared();
     if (!h) throw new Error('De gedeelde database van deze pagina is niet beschikbaar.');
     this.db = h.db;
+    this.room = h.room;
     const userId = await h.user?.id();
     // Some invited guests get no account id here; they are then recognised by this device.
     this.me = userId ?? (await deviceId());
@@ -184,5 +194,38 @@ export class SharedBackend implements Backend {
     else await storage.remove(LOCAL_PRIVATE_KEY);
     this.shared.clear();
     this.privateEvents = [];
+  }
+
+  async loadHouse(): Promise<HouseLayout | null> {
+    const snap = await this.db.doc(HOUSE).get();
+    return snap.exists ? (snap.data() as HouseLayout) : null;
+  }
+
+  private houseWrites: Promise<void> = Promise.resolve();
+
+  async saveHouse(layout: HouseLayout): Promise<void> {
+    const write = this.houseWrites.then(() => this.db.doc(HOUSE).set(layout as unknown as Record<string, unknown>));
+    this.houseWrites = write.catch(() => undefined);
+    await write;
+  }
+
+  subscribeHouse(onChange: (layout: HouseLayout | null) => void) {
+    return this.db.doc(HOUSE).onSnapshot(
+      snap => onChange(snap.exists ? (snap.data() as HouseLayout) : null),
+      e => console.warn('Huisje live bijwerken gestopt', e),
+    );
+  }
+
+  setPresence(p: Presence) {
+    void this.room?.presence({ samen: p }).catch(() => undefined);
+  }
+
+  subscribePresence(onChange: (others: Presence[]) => void) {
+    const room = this.room;
+    if (!room) return () => {};
+    const read = (peers: readonly Peer[]) =>
+      onChange(peers.filter(peer => !peer.isMe && peer.presence.samen).map(peer => peer.presence.samen as Presence).filter(p => p.uid !== this.me));
+    read(room.peers());
+    return room.onPeers(change => read(change.peers));
   }
 }

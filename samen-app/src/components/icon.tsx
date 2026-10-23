@@ -1,6 +1,6 @@
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 
-export type IconName = 'home' | 'cards' | 'game' | 'compass' | 'sofa' | 'settings' | 'back';
+export type IconName = 'home' | 'cards' | 'game' | 'compass' | 'trophy' | 'settings' | 'back';
 
 export function Icon({ name, color, size = 24 }: { name: IconName; color: string; size?: number }) {
   const stroke = { stroke: color, strokeWidth: 2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, fill: 'none' };
@@ -27,10 +27,9 @@ export function Icon({ name, color, size = 24 }: { name: IconName; color: string
           <Path d="m15.5 8.5-2 5-5 2 2-5z" {...stroke} />
         </>
       )}
-      {name === 'sofa' && (
+      {name === 'trophy' && (
         <>
-          <Path d="M5 11V8a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v3" {...stroke} />
-          <Path d="M3 13a2 2 0 0 1 4 0v1h10v-1a2 2 0 0 1 4 0v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM6 19v2M18 19v2" {...stroke} />
+          <Path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8M9 17h6v3H9z" {...stroke} />
         </>
       )}
       {name === 'settings' && (

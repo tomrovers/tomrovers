@@ -9,14 +9,14 @@ zodat één codebase werkt op iPhone, Android en het web.
 |---|---|
 | **Welkom & LoveGotchi** | Naam invullen en je eigen mini-jij maken (huid, kapsel, haarkleur, baard, outfit, accessoire). |
 | **Koppelen** | Een koppelcode van 6 tekens maken of invullen. Of de demo proberen met een gesimuleerde partner, Sam. |
-| **Thuis** | Jullie huisje met beide avatars, het level van jullie verbondenheid, het dagbeeld en lieve gebaren (compliment, knuffel, hartje, lief bericht). |
+| **Het huisje** | Jullie isometrische huis, het hart van de app. Tik op de vloer om te lopen, op de bank om te gaan zitten en op je partner voor een knuffel. Voorwerpen openen de rest van de app: de kalender de check-in, de kaarten op tafel de gesprekskaarten, het prikbord het Kompas, de arcadekast de spellen en de kledingkast je outfit. Een roze bolletje laat zien waar iets op je wacht. Met **Inrichten** sleep, draai en berg je meubels op. Op level 2, 3 en 4 komen de slaapkamer, de tuin en de spelkamer erbij. Zie je elkaar live lopen als jullie allebei de app open hebben. |
 | **Dagelijkse check-in** | Stemming, energie en behoefte. Na beide check-ins zie je een gedeeld dagbeeld met een voorstel voor de avond. |
 | **Gesprekskaarten** | 25 vragen in 5 thema's. Je ziet het antwoord van je partner pas na je eigen antwoord. Inzichten kun je in het Kompas bewaren. |
 | **Ken je mij?** | Vijf vragen over jezelf, daarna raad je wat je partner koos. Na beide inzendingen volgt de uitslag. |
 | **Reflex Battle** | Op één telefoon: wie tikt het snelst als het scherm roze wordt? Best of five. |
 | **Beloningenpot** | Samen beloningen kiezen. De winnaar kiest er een en jullie vinken af wanneer hij verzilverd is. |
 | **Kompas** | Liefdestalen invullen, gedeeld of alleen voor jezelf, met een dagelijkse tip. Plus bewaarde inzichten. |
-| **Huisje & prestaties** | 9 prestaties. Elke prestatie zet een nieuw voorwerp in het huisje (plantje, sfeerlamp, gouden fotolijst …). |
+| **Prestaties** | 9 prestaties. Elke prestatie levert een meubel op voor in de opslag (plantje, sfeerlamp, gouden fotolijst …). |
 
 **Privacy zit in de database zelf**: check-ins en antwoorden kan je partner pas lezen als jullie allebei hebben
 ingevuld. Notities "alleen voor mij" kan alleen jij lezen. Dat regelt de server, niet alleen de app.
@@ -52,7 +52,7 @@ Zonder server-instellingen werkt alleen de demo. Voor echte koppels met twee tel
 ## 3. De server aanzetten (Supabase, gratis om te beginnen)
 
 1. Maak een account op <https://supabase.com> en een nieuw project. Kies als regio **Frankfurt (EU)** vanwege de AVG.
-2. Ga naar **SQL Editor**, plak de inhoud van [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql) en klik op **Run**.
+2. Ga naar **SQL Editor**, plak de inhoud van [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql) en klik op **Run**. Doe daarna hetzelfde met [`0002_house.sql`](supabase/migrations/0002_house.sql).
 3. Ga naar **Authentication → Sign In / Providers** en zet **Anonymous sign-ins** aan.
 4. Ga naar **Project Settings → API** en kopieer de *Project URL* en de *anon public key*.
 5. Kopieer in deze map `.env.example` naar `.env` en vul beide waarden in.
@@ -87,7 +87,9 @@ testen door minimaal 12 testers voordat je mag publiceren. Met een organisatie-a
 
 ```
 src/app/            de schermen (elke file is een scherm; (tabs) is de tabbalk onderin)
-src/components/     avatar, huisje, iconen en de basis-UI
+src/components/     avatar, iconen en de basis-UI
+src/components/house/  de huisscène: tekeningen (sprites), lopende figuurtjes en de interactie
+src/lib/house/      kamers, meubels, indeling, looproutes en de isometrische projectie
 src/lib/content.ts  alle teksten: kaarten, vragen, prestaties, beloningen
 src/lib/state.ts    rekent uit wat jullie samen hebben gedaan (levels, prestaties, uitslagen)
 src/lib/backend/    demo.ts (alles op de telefoon) en supabase.ts (de echte server)

@@ -6,6 +6,7 @@ import { detectShared, SharedBackend } from './backend/shared';
 import { cloudConfigured, SupabaseBackend } from './backend/supabase';
 import type { Backend, Session } from './backend/types';
 import { defaultRewards } from './content';
+import type { HouseLayout, Presence } from './house/layout';
 import { deriveState, type CoupleState } from './state';
 import * as storage from './storage';
 import type { NewEvent, Profile, SamenEvent } from './types';
@@ -29,6 +30,11 @@ type Store = {
   joinCouple: (code: string) => Promise<void>;
   post: (event: NewEvent) => Promise<void>;
   leaveCouple: () => Promise<void>;
+  house: HouseLayout | null;
+  saveHouse: (rooms: HouseLayout['rooms']) => Promise<void>;
+  /** Where the partner's figure is right now (if they have the app open). */
+  partnerPresence: Presence | null;
+  setPresence: (p: Omit<Presence, 'uid' | 'at'>) => void;
 };
 
 const PROFILE_KEY = 'samen.profile';
@@ -46,6 +52,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [events, setEvents] = useState<SamenEvent[]>([]);
+  const [house, setHouse] = useState<HouseLayout | null>(null);
+  const [others, setOthers] = useState<Presence[]>([]);
   const backend = useRef<Backend | null>(null);
 
   const reload = useCallback(async () => {
@@ -101,8 +109,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   // Live updates while in a couple.
   const coupleId = session?.coupleId;
   useEffect(() => {
-    if (!coupleId || !backend.current) return;
-    return backend.current.subscribe(() => void reload());
+    const b = backend.current;
+    if (!coupleId || !b) return;
+    let alive = true;
+    void b.loadHouse().then(l => alive && setHouse(l));
+    const stops = [b.subscribe(() => void reload()), b.subscribeHouse(l => setHouse(l)), b.subscribePresence(setOthers)];
+    return () => {
+      alive = false;
+      stops.forEach(stop => stop());
+    };
   }, [coupleId, reload]);
 
   const state = useMemo(
@@ -152,7 +167,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const startShared = useCallback(async () => {
     profilePostedFor.current = 'main'; // posted right below, not by the effect
     await connect('shared');
-    const b = backend.current as SharedBackend;
+    const b = backend.current as unknown as SharedBackend;
     const first = !b.hasEvents();
     if (profile) await b.post(actions.profile(profile));
     if (first) await afterCreate();
@@ -178,10 +193,28 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     await backend.current?.leaveCouple();
     await storage.remove(MODE_KEY);
     backend.current = null;
+    setHouse(null);
+    setOthers([]);
     setMode(null);
     setSession(null);
     setEvents([]);
   }, []);
+
+  const saveHouse = useCallback(async (roomsLayout: HouseLayout['rooms']) => {
+    const layout = { rooms: roomsLayout, updatedAt: Date.now() };
+    setHouse(layout);
+    await backend.current?.saveHouse(layout);
+  }, []);
+
+  const userId = session?.userId;
+  const setPresence = useCallback(
+    (p: Omit<Presence, 'uid' | 'at'>) => {
+      if (userId) backend.current?.setPresence({ ...p, uid: userId, at: Date.now() });
+    },
+    [userId],
+  );
+
+  const partnerPresence = (state?.partnerId && others.find(o => o.uid === state.partnerId)) || others[0] || null;
 
   const status: Status = !booted ? 'loading' : !profile ? 'needs-profile' : !session?.coupleId ? 'needs-couple' : 'ready';
 
@@ -200,6 +233,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     joinCouple,
     post,
     leaveCouple,
+    house,
+    saveHouse,
+    partnerPresence,
+    setPresence,
   };
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;

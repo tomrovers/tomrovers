@@ -55,7 +55,7 @@ export type CoupleState = {
   items: Set<HouseItemId>;
 };
 
-export const XP_PER_LEVEL = 120;
+export const XP_PER_LEVEL = 80;
 
 export function dayKey(date = new Date()): string {
   const y = date.getFullYear();

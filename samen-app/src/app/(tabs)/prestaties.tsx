@@ -1,31 +1,23 @@
 import { router } from 'expo-router';
 
-import { House } from '@/components/house';
-import { Body, Button, Card, Eyebrow, H1, H2, Row, Screen, Small, Strong } from '@/components/ui';
+import { ItemIcon } from '@/components/house/sprites';
+import { Body, Button, Card, Eyebrow, H1, Row, Screen, Small, Strong } from '@/components/ui';
 import { achievements } from '@/lib/content';
-import { expressions } from '@/lib/people';
+import { kinds } from '@/lib/house/catalog';
 import { useCouple } from '@/lib/store';
 import { colors } from '@/theme';
 
-export default function Huisje() {
+export default function Prestaties() {
   const { state } = useCouple();
-  const face = expressions(state);
   const count = state.unlocked.size;
 
   return (
     <Screen>
-      <Eyebrow>Jullie digitale huisje</Eyebrow>
-      <H1>Van lege kamer naar ons eigen plekje</H1>
-      <House
-        items={state.items}
-        me={state.me && { avatar: state.me.avatar, expression: face.me }}
-        partner={state.partner && { avatar: state.partner.avatar, expression: face.partner }}
-      />
+      <Eyebrow>Prestaties</Eyebrow>
+      <H1>
+        Samen verdiend ({count}/{achievements.length})
+      </H1>
       <Button title="Pas mijn LoveGotchi aan" variant="secondary" onPress={() => router.push('/avatar')} />
-
-      <H2>
-        Prestaties ({count}/{achievements.length})
-      </H2>
       <Body>Elke prestatie levert iets op voor in jullie huisje.</Body>
       {achievements.map(a => {
         const done = state.unlocked.has(a.id);
@@ -36,7 +28,10 @@ export default function Huisje() {
               <Small style={{ color: done ? colors.success : colors.muted }}>{done ? 'Ontgrendeld' : 'Nog te doen'}</Small>
             </Row>
             <Small>{a.description}</Small>
-            <Small style={{ color: colors.plum }}>Beloning: {a.itemLabel}</Small>
+            <Row>
+              <ItemIcon kind={kinds.find(k => 'achievement' in k.from && k.from.achievement === a.item)?.id ?? ''} size={40} />
+              <Small style={{ color: colors.plum, flex: 1 }}>Voor in het huisje: {a.itemLabel}</Small>
+            </Row>
           </Card>
         );
       })}
