@@ -1,5 +1,7 @@
 # Samen – de app
 
+> Waar gaat het om? Lees eerst [FOCUS.md](FOCUS.md).
+
 De eerste werkende versie van **Samen Couples** (fase 1 uit het conceptboek), gebouwd met Expo (React Native)
 zodat één codebase werkt op iPhone, Android en het web.
 
@@ -9,7 +11,7 @@ zodat één codebase werkt op iPhone, Android en het web.
 |---|---|
 | **Welkom & LoveGotchi** | Naam invullen en je eigen mini-jij maken (huid, kapsel, haarkleur, baard, outfit, accessoire). |
 | **Koppelen** | Een koppelcode van 6 tekens maken of invullen. Of de demo proberen met een gesimuleerde partner, Sam. |
-| **Het huisje** | Jullie isometrische huis, het hart van de app. Tik op de vloer om te lopen, op de bank om te gaan zitten en op je partner voor een knuffel. Voorwerpen openen de rest van de app: de kalender de check-in, de kaarten op tafel de gesprekskaarten, het prikbord het Kompas, de arcadekast de spellen en de kledingkast je outfit. Een roze bolletje laat zien waar iets op je wacht. Met **Inrichten** sleep, draai en berg je meubels op. Op level 2, 3 en 4 komen de slaapkamer, de tuin en de spelkamer erbij. Zie je elkaar live lopen als jullie allebei de app open hebben. |
+| **Vandaag** | De dagelijkse kern op één scherm: de week in één oogopslag, je check-in, één klein gebaar voor je partner (gekozen uit drie voorstellen op basis van diens liefdestaal en behoefte), "Ik merkte het ❤️" voor wat je partner voor jou deed, en de gesprekskaart van de dag. Daaronder staan de andere plekken (zie `src/lib/stations.ts` en [FOCUS.md](FOCUS.md)). |
 | **Dagelijkse check-in** | Stemming, energie en behoefte. Na beide check-ins zie je een gedeeld dagbeeld met een voorstel voor de avond. |
 | **Gesprekskaarten** | 25 vragen in 5 thema's. Je ziet het antwoord van je partner pas na je eigen antwoord. Inzichten kun je in het Kompas bewaren. |
 | **Ken je mij?** | Vijf vragen over jezelf, daarna raad je wat je partner koos. Na beide inzendingen volgt de uitslag. |

@@ -56,4 +56,9 @@ export const actions = {
   removeReward: (id: string): NewEvent => ({ type: 'reward.remove', payload: { id }, visibility: 'public' }),
   claimReward: (gameKey: string, rewardId: string): NewEvent => ({ type: 'reward.claim', payload: { gameKey, rewardId }, visibility: 'public' }),
   redeemReward: (claimId: string): NewEvent => ({ type: 'reward.redeem', payload: { claimId }, visibility: 'public' }),
+
+  /** Picking stays private, so the act can still be a surprise. */
+  pickMission: (missionId: string): NewEvent => ({ type: 'mission.pick', payload: { day: dayKey(), missionId }, visibility: 'private' }),
+  missionDone: (missionId: string, note?: string): NewEvent => ({ type: 'mission.done', payload: { day: dayKey(), missionId, note }, visibility: 'public' }),
+  missionSeen: (doneId: string): NewEvent => ({ type: 'mission.seen', payload: { doneId }, visibility: 'public' }),
 };

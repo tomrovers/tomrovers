@@ -28,6 +28,8 @@ export type Win = { gameKey: string; title: string; winnerId: string; at: string
 export type Gesture = { id: string; from: string; kind: GestureKind; text?: string; at: string };
 export type CompassNote = { id: string; authorId: string; theme: string; text: string; private: boolean; at: string };
 export type Reward = { id: string; title: string };
+export type DoneMission = { id: string; by: string; missionId: string; note?: string; day: string; at: string; seen: boolean };
+export type WeekDay = { day: string; label: string; checkins: number; acts: number; today: boolean };
 
 export type CoupleState = {
   myId: string;
@@ -51,6 +53,14 @@ export type CoupleState = {
   gestures: Gesture[];
   compass: CompassNote[];
   loveLang: { mine?: LoveLanguageScores; partner?: LoveLanguageScores; minePrivate: boolean };
+  /** Today's own opdracht: picked (private) and whether it is done. */
+  mission: { picked?: string; done?: DoneMission };
+  /** Acts the partner did for me that I have not confirmed yet. */
+  forMe: DoneMission[];
+  /** Every act either of us did, newest first. */
+  acts: DoneMission[];
+  confirmedActs: number;
+  week: WeekDay[];
   unlocked: Set<string>; // achievement ids
   items: Set<HouseItemId>;
 };
@@ -73,6 +83,7 @@ const xpFor: Partial<Record<SamenEvent['type'], number>> = {
   gesture: 5,
   'game.result': 15,
   'reward.redeem': 10,
+  'mission.done': 10,
 };
 
 export function deriveState(all: SamenEvent[], myId: string, memberIds: string[]): CoupleState {
@@ -112,6 +123,11 @@ export function deriveState(all: SamenEvent[], myId: string, memberIds: string[]
     gestures: [],
     compass: [],
     loveLang: { minePrivate: false },
+    mission: {},
+    forMe: [],
+    acts: [],
+    confirmedActs: 0,
+    week: [],
     unlocked: new Set(),
     items: new Set(),
   };
@@ -123,6 +139,7 @@ export function deriveState(all: SamenEvent[], myId: string, memberIds: string[]
   const reflexResults: { winnerId: string | null; at: string; id: string }[] = [];
   const claimsByGame = new Map<string, Claim>();
   const redeemed = new Set<string>();
+  const seenActs = new Set<string>();
 
   for (const e of visible) {
     const mine = e.authorId === myId;
@@ -190,6 +207,16 @@ export function deriveState(all: SamenEvent[], myId: string, memberIds: string[]
       case 'reward.redeem':
         redeemed.add(e.payload.claimId);
         break;
+      case 'mission.pick':
+        if (mine && e.payload.day === state.today.day) state.mission.picked = e.payload.missionId;
+        break;
+      case 'mission.done':
+        state.acts.push({ id: e.id, by: e.authorId, missionId: e.payload.missionId, note: e.payload.note, day: e.payload.day, at: e.createdAt, seen: false });
+        break;
+      case 'mission.seen':
+        // Only the partner of the one who did the act can confirm it.
+        if (state.acts.some(a => a.id === e.payload.doneId && a.by !== e.authorId)) seenActs.add(e.payload.doneId);
+        break;
     }
   }
 
@@ -245,6 +272,30 @@ export function deriveState(all: SamenEvent[], myId: string, memberIds: string[]
   state.rewards = [...rewards.values()];
   state.gestures.reverse();
   state.compass.reverse();
+
+  // Opdrachten: an act counts once the partner confirms they noticed it.
+  for (const a of state.acts) a.seen = seenActs.has(a.id);
+  state.confirmedActs = state.acts.filter(a => a.seen).length;
+  state.mission.done = state.acts.find(a => a.by === myId && a.day === state.today.day);
+  state.forMe = state.acts.filter(a => a.by !== myId && !a.seen).reverse();
+  state.acts.reverse();
+  state.xp += state.confirmedActs * 20;
+
+  // This week, Monday to Sunday.
+  const now = new Date();
+  const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - ((now.getDay() + 6) % 7));
+  const labels = ['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo'];
+  state.week = labels.map((label, i) => {
+    const d = dayKey(new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + i));
+    const c = checkins.get(d);
+    return {
+      day: d,
+      label,
+      checkins: (c?.mine ? 1 : 0) + (c?.partner ? 1 : 0),
+      acts: state.acts.filter(a => a.day === d && a.seen).length,
+      today: d === state.today.day,
+    };
+  });
 
   // Level
   state.level = Math.floor(state.xp / XP_PER_LEVEL) + 1;

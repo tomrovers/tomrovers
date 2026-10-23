@@ -15,5 +15,5 @@ export default function Index() {
   }
   if (status === 'needs-profile') return <Redirect href="/welkom" />;
   if (status === 'needs-couple') return <Redirect href="/koppelen" />;
-  return <Redirect href="/thuis" />;
+  return <Redirect href="/vandaag" />;
 }

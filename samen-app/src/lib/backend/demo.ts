@@ -1,5 +1,6 @@
 import { kjmRoundQuestions } from '../content';
 import { kindById } from '../house/catalog';
+import { missions } from '../missions';
 import { besideItem, blockedTiles, freeTile, roomItems, tilesOf, type HouseLayout, type Presence } from '../house/layout';
 import { dayKey } from '../state';
 import * as storage from '../storage';
@@ -97,8 +98,9 @@ export class DemoBackend implements Backend {
 
   async post(event: NewEvent): Promise<void> {
     this.add(ME, event);
+    const id = this.data.events[this.data.events.length - 1].id;
     await this.save();
-    this.reactAsPartner(event);
+    this.reactAsPartner(event, id);
   }
 
   subscribe(onChange: () => void) {
@@ -178,12 +180,22 @@ export class DemoBackend implements Backend {
     return this.data.events.some(e => e.authorId === PARTNER && e.sealKey === sealKey);
   }
 
-  private reactAsPartner(event: NewEvent) {
+  private reactAsPartner(event: NewEvent, id: string) {
     const sealKey = event.sealKey;
     if (sealKey && this.partnerHas(sealKey)) return;
 
     switch (event.type) {
+      case 'mission.done':
+        this.later(3000, () => this.add(PARTNER, { type: 'mission.seen', payload: { doneId: id }, visibility: 'public' }));
+        break;
       case 'checkin': {
+        // Sam does something sweet for you too, once a day.
+        const today = dayKey();
+        if (!this.data.events.some(e => e.authorId === PARTNER && e.type === 'mission.done' && e.payload.day === today)) {
+          const m = pick(missions);
+          const note = pick([undefined, 'Zomaar, omdat ik je lief vind.', 'Hoop dat je het merkte!']);
+          this.later(4500, () => this.add(PARTNER, { type: 'mission.done', payload: { day: today, missionId: m.id, note }, visibility: 'public' }));
+        }
         const payload: CheckInPayload = {
           day: dayKey(),
           mood: pick(['blij', 'ok', 'druk', 'moe']),

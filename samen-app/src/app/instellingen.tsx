@@ -49,7 +49,7 @@ export default function Instellingen() {
                 title="Stop de demo en begin samen"
                 onPress={async () => {
                   await leaveDemoForShared();
-                  router.replace('/thuis');
+                  router.replace('/vandaag');
                 }}
               />
             )}

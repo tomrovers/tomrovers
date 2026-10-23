@@ -14,7 +14,7 @@ export default function Koppelen() {
     setBusy(kind);
     try {
       await fn();
-      router.replace('/thuis');
+      router.replace('/vandaag');
     } catch (e) {
       notify('Dat lukte niet', e instanceof Error ? e.message : 'Probeer het later opnieuw.');
     } finally {

@@ -12,7 +12,7 @@ export function Header({ eyebrow, title }: { eyebrow: string; title: string }) {
     <>
       <Row>
         <Pressable
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/thuis'))}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/vandaag'))}
           accessibilityRole="button"
           accessibilityLabel="Terug"
           hitSlop={12}>

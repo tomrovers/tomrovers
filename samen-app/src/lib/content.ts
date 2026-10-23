@@ -150,3 +150,5 @@ export const achievements: Achievement[] = [
   { id: 'kompas-ontdekkers', title: 'Kompas-ontdekkers', description: 'Jullie vulden allebei je liefdestalen in.', item: 'kompas-schilderij', itemLabel: 'Een kompas-schilderij' },
   { id: 'spelletjesavond', title: 'Spelletjesavond', description: 'Vijf spellen samen gespeeld.', item: 'lichtslinger', itemLabel: 'Een lichtslinger' },
 ];
+
+export const randomCompliment = () => complimentIdeas[Math.floor(Math.random() * complimentIdeas.length)];

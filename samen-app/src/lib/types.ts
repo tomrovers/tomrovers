@@ -53,7 +53,10 @@ export type EventBody =
   | { type: 'reward.remove'; payload: { id: string } }
   | { type: 'reward.claim'; payload: { gameKey: string; rewardId: string } }
   | { type: 'reward.redeem'; payload: { claimId: string } }
-  | { type: 'sealed.ping'; payload: { key: string } };
+  | { type: 'sealed.ping'; payload: { key: string } }
+  | { type: 'mission.pick'; payload: { day: string; missionId: string } }
+  | { type: 'mission.done'; payload: { day: string; missionId: string; note?: string } }
+  | { type: 'mission.seen'; payload: { doneId: string } };
 
 export type EventType = EventBody['type'];
 
