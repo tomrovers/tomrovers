@@ -50,6 +50,11 @@ alter table public.couples enable row level security;
 alter table public.couple_members enable row level security;
 alter table public.events enable row level security;
 
+-- Signed-in users only (anonymous sign-ins get the authenticated role too). The policies below decide which rows.
+grant usage on schema public to authenticated;
+grant select on public.couples, public.couple_members to authenticated;
+grant select, insert, delete on public.events to authenticated;
+
 create policy "members read their couple" on public.couples
   for select using (public.is_member(id));
 

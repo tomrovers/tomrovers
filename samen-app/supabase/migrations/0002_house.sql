@@ -8,6 +8,7 @@ create table public.couple_houses (
 );
 
 alter table public.couple_houses enable row level security;
+grant select, insert, update on public.couple_houses to authenticated;
 
 create policy "members read their house" on public.couple_houses
   for select using (public.is_member(couple_id));
