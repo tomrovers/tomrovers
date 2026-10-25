@@ -2,6 +2,7 @@
   "expo": {
     "name": "Samen",
     "slug": "samen",
+    "owner": "stormvoerenterprise",
     "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
