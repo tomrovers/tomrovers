@@ -17,8 +17,8 @@ Read FOCUS.md and README.md first. Talk to Tom in Dutch; he has no programming e
 2. `0003_afterdark_privacy.sql` is written and tested with PGlite; check it is applied (`revealed_sealed_events`
    should contain `align_of`). Check that anonymous sign-ins are on.
 3. Expo: project slug `samen`, GitHub repo tomrovers/tomrovers with base directory `samen-app`,
-   env vars `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` (publishable key) for preview
-   and production. Put the projectId and owner in app.json, then build the preview APK
+the Supabase URL and publishable key are in eas.json (public by design).
+   The Expo connector cannot create projects, so Tom creates it on expo.dev. Put the projectId and owner in app.json, then build the preview APK
    (`build_run`, profile `preview`, platform ANDROID, branch `claude/new-session-v9garq`).
 4. Tom and Annelieke use the APK daily for two weeks; then store requirements (see "Nog te doen vóór de lancering" in README:
    login, account deletion, reminders, RevenueCat, privacy policy, age rating, store listing).
