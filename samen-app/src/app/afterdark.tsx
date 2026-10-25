@@ -7,7 +7,7 @@ import { Icon } from '@/components/icon';
 import { Btn, Chip, T } from '@/components/night';
 import { VonkPanel } from '@/components/vonk';
 import { actions } from '@/lib/actions';
-import { adCards, adLevels, adStickerById, adStickers, alignmentOf, alignQuestions, wishes, type AdLevel, type Alignment, type WishAnswer } from '@/lib/afterdark';
+import { adCards, adLevels, adStickerById, adStickers, alignQuestions, wishes, type AdLevel, type Alignment, type WishAnswer } from '@/lib/afterdark';
 import { nameOf } from '@/lib/people';
 import { useCouple } from '@/lib/store';
 import { fonts, night, radius, space } from '@/theme';
@@ -112,8 +112,7 @@ export default function AfterDark() {
                   </T>
                   {alignQuestions.map(q => {
                     const a = ad.align[q.id];
-                    const both = a?.mine !== undefined && a.partner !== undefined;
-                    const result = both ? alignmentOf(q, a.mine!, a.partner!) : undefined;
+                    const result = a?.alignment;
                     return (
                       <View key={q.id} style={styles.card}>
                         <T kind="h2" style={{ fontSize: 16 }}>

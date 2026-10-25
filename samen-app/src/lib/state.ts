@@ -1,4 +1,4 @@
-import { alignQuestions, type AdLevel, type VonkReply, type WishAnswer } from './afterdark';
+import { alignmentOf, alignQuestions, type AdLevel, type Alignment, type VonkReply, type WishAnswer } from './afterdark';
 import {
   achievements,
   allCards,
@@ -49,7 +49,7 @@ export type AfterDark = {
   /** Weekday on which your sparks match most often, once it happened at least twice. */
   rhythm?: string;
   vonken: Vonk[];
-  align: Record<string, { mine?: number; partner?: number; partnerDone: boolean }>;
+  align: Record<string, { mine?: number; partner?: number; partnerDone: boolean; alignment?: Alignment }>;
   trophies: Set<string>;
 };
 export type WeekDay = { day: string; label: string; checkins: number; acts: number; today: boolean };
@@ -294,7 +294,9 @@ export function deriveState(all: SamenEvent[], myId: string, memberIds: string[]
         break;
       case 'ad.align': {
         const a = (state.afterDark.align[e.payload.questionId] ??= { partnerDone: false });
-        a[mine ? 'mine' : 'partner'] = e.payload.answer;
+        if (mine) a.mine = e.payload.answer;
+        else if (e.payload.alignment) a.alignment = e.payload.alignment;
+        else a.partner = e.payload.answer;
         break;
       }
     }
@@ -340,11 +342,16 @@ export function deriveState(all: SamenEvent[], myId: string, memberIds: string[]
   if (best && best[1] >= 2) ad.rhythm = weekdayNames[best[0]];
   for (const v of ad.vonken) v.reply = vonkReplies.get(v.id);
   ad.vonken.reverse();
-  for (const [id, a] of Object.entries(ad.align)) a.partnerDone = partnerSealedKeys.has(`ad:align:${id}`);
   for (const q of alignQuestions) {
     if (partnerSealedKeys.has(`ad:align:${q.id}`)) ad.align[q.id] ??= { partnerDone: true };
+    const a = ad.align[q.id];
+    if (!a) continue;
+    a.partnerDone = partnerSealedKeys.has(`ad:align:${q.id}`);
+    // The real server already sends the alignment; the demo and test page compare here.
+    if (a.mine === undefined) a.alignment = undefined;
+    else if (!a.alignment && a.partner !== undefined) a.alignment = alignmentOf(q, a.mine, a.partner);
   }
-  if (alignQuestions.every(q => ad.align[q.id]?.mine !== undefined && ad.align[q.id]?.partner !== undefined)) ad.trophies.add('op-een-lijn');
+  if (alignQuestions.every(q => ad.align[q.id]?.alignment)) ad.trophies.add('op-een-lijn');
   if (fireDays >= 3) ad.trophies.add('vonkenregen');
 
   // Cards

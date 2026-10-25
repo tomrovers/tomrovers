@@ -64,7 +64,8 @@ export type EventBody =
   | { type: 'ad.spark'; payload: { day: string; level: number } }
   | { type: 'ad.vonk'; payload: { day: string } }
   | { type: 'ad.vonkReply'; payload: { vonkId: string; reply: 'ja' | 'later' | 'knuffel' } }
-  | { type: 'ad.align'; payload: { questionId: string; answer: number } };
+  // The server shares only how two answers compare (alignment), never the partner's answer itself.
+  | { type: 'ad.align'; payload: { questionId: string; answer?: number; alignment?: 'samen' | 'dichtbij' | 'verschil' } };
 
 export type EventType = EventBody['type'];
 

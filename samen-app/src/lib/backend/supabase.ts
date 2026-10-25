@@ -112,8 +112,10 @@ export class SupabaseBackend implements Backend {
       { couple_id: coupleId, type: event.type, payload: event.payload, visibility: event.visibility, seal_key: event.sealKey ?? null },
     ];
     // A sealed event is invisible to the partner, so announce it with an empty public ping.
+    // For a spark the ping does not say what it is about: whether you filled it in stays yours.
     if (event.visibility === 'sealed' && event.sealKey) {
-      rows.push({ couple_id: coupleId, type: 'sealed.ping', payload: { key: event.sealKey }, visibility: 'public', seal_key: null });
+      const key = event.type === 'ad.spark' ? 'ad:activity' : event.sealKey;
+      rows.push({ couple_id: coupleId, type: 'sealed.ping', payload: { key }, visibility: 'public', seal_key: null });
     }
     const { error } = await this.client.from('events').insert(rows);
     fail(error, 'Opslaan mislukt.');

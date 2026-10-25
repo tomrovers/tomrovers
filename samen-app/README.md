@@ -22,7 +22,9 @@ zodat één codebase werkt op iPhone, Android en het web.
 | **Prestaties** | 10 prestaties, waaronder de trofee *Couples who play together, stay together* (in vier verschillende weken samen spelen). De andere leveren een meubel op voor in de opslag (plantje, sfeerlamp, gouden fotolijst …). |
 
 **Privacy zit in de database zelf**: check-ins en antwoorden kan je partner pas lezen als jullie allebei hebben
-ingevuld. Notities "alleen voor mij" kan alleen jij lezen. Dat regelt de server, niet alleen de app.
+ingevuld. Notities "alleen voor mij" kan alleen jij lezen. Bij After Dark geeft de server alleen matches door: een nee,
+een laag vonk-getal of je precieze antwoord bij Afstemmen bereikt de telefoon van je partner nooit. Dat regelt de
+server, niet alleen de app.
 
 ## 1. Uitproberen zonder iets te installeren
 
@@ -55,7 +57,7 @@ Zonder server-instellingen werkt alleen de demo. Voor echte koppels met twee tel
 ## 3. De server aanzetten (Supabase, gratis om te beginnen)
 
 1. Maak een account op <https://supabase.com> en een nieuw project. Kies als regio **Frankfurt (EU)** vanwege de AVG.
-2. Ga naar **SQL Editor**, plak de inhoud van [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql) en klik op **Run**. Doe daarna hetzelfde met [`0002_house.sql`](supabase/migrations/0002_house.sql).
+2. Ga naar **SQL Editor**, plak de inhoud van [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql) en klik op **Run**. Doe daarna hetzelfde met [`0002_house.sql`](supabase/migrations/0002_house.sql) en [`0003_afterdark_privacy.sql`](supabase/migrations/0003_afterdark_privacy.sql).
 3. Ga naar **Authentication → Sign In / Providers** en zet **Anonymous sign-ins** aan.
 4. Ga naar **Project Settings → API** en kopieer de *Project URL* en de *anon public key*.
 5. Kopieer in deze map `.env.example` naar `.env` en vul beide waarden in.
@@ -95,8 +97,7 @@ testen door minimaal 12 testers voordat je mag publiceren. Met een organisatie-a
 4. **Dagelijkse herinnering** – een melding op een zelfgekozen tijd voor de check-in (`expo-notifications`).
 5. **Privacyverklaring en voorwaarden** – nodig voor beide stores. Gegevens over intimiteit vallen onder de strengste AVG-categorie: vraag uitdrukkelijk toestemming.
 6. **Winkelpagina** – schermafbeeldingen, beschrijving, leeftijdsclassificatie en Apple's "App Privacy"-labels.
-7. **Wensen en vonken op de server** – in de echte app moet de server zelf alleen matches teruggeven (een functie zoals `revealed_sealed_events`), zodat een nee of een laag getal de telefoon van de partner nooit bereikt.
-8. **Later** – meer minigames, huisjes bezoeken en 2-tegen-2 (Couples Plus), en Samen Singles.
+7. **Later** – meer minigames, huisjes bezoeken en 2-tegen-2 (Couples Plus), en Samen Singles.
 
 ## Hoe de code in elkaar zit
 

@@ -12,14 +12,10 @@ Read FOCUS.md and README.md first. Talk to Tom in Dutch; he has no programming e
   Google Play organization account. Apple: enroll as an individual.
 
 ## Next
-1. Apply `supabase/migrations/0001_init.sql` and `0002_house.sql` (Supabase connector, or Tom pastes them
-   in the SQL Editor). Turn on anonymous sign-ins (Authentication → Sign In / Providers).
-2. Write `0003_afterdark_privacy.sql`: the server must only reveal After Dark answers that match.
-   - Wishes: reveal the partner's answer only when both said ja/misschien.
-   - Sparks: return least(mine, partner) only when both ≥ 2, otherwise nothing.
-   - Afstemmen: return the alignment (samen/dichtbij/verschil, see `alignQuestions` in `src/lib/afterdark.ts`)
-     instead of the partner's answer.
-   - The latest event per seal key counts. Then adapt `src/lib/backend/supabase.ts` and `state.ts`.
+1. Done: migrations 0001 and 0002 are applied on Supabase (Tom pasted them; the connector's
+   apply_migration asks a confirmation that does not reach Tom, so let him paste SQL in the SQL Editor).
+2. `0003_afterdark_privacy.sql` is written and tested with PGlite; check it is applied (`revealed_sealed_events`
+   should contain `align_of`). Check that anonymous sign-ins are on.
 3. Expo: project slug `samen`, GitHub repo tomrovers/tomrovers with base directory `samen-app`,
    env vars `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` (publishable key) for preview
    and production. Put the projectId and owner in app.json, then build the preview APK
