@@ -5,7 +5,7 @@
 #   EXPO_TOKEN                     an access token from expo.dev (Account settings → Access tokens)
 #   EXPO_PUBLIC_SUPABASE_URL       the Supabase project URL
 #   EXPO_PUBLIC_SUPABASE_ANON_KEY  the Supabase anon (public) key
-# Without the two Supabase values the app only has the demo with Sam.
+# Without the two Supabase values the app only has the demo with Annelieke.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 

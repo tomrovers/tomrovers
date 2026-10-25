@@ -69,7 +69,7 @@ export const stations: Station[] = [
   {
     id: 'afterdark',
     title: 'After Dark',
-    blurb: 'Flirten, wensen en ondeugende stickers · 18+',
+    blurb: 'Vonk, afstemmen, wensen en stickers · 18+',
     emoji: '😈',
     tone: 'lav',
     dark: true,
@@ -78,6 +78,7 @@ export const stations: Station[] = [
     waiting: s => {
       const ad = s.afterDark;
       if (!ad.active) return ad.mine?.on ? 'Staat aan voor jou' : null;
+      if (ad.spark.match === 'vuur') return 'Jullie hebben allebei veel zin 🔥';
       if (ad.awards.some(a => a.to === s.myId && a.status === 'open')) return 'Er wacht een sticker op je';
       if (Object.entries(s.cards).some(([id, c]) => id.startsWith('ad') && c.partnerDone && !c.mine)) return 'Er wacht een antwoord op jou';
       return null;

@@ -1,4 +1,4 @@
-import type { AdLevel, WishAnswer } from './afterdark';
+import { alignQuestions, type AdLevel, type VonkReply, type WishAnswer } from './afterdark';
 import {
   achievements,
   allCards,
@@ -31,6 +31,9 @@ export type CompassNote = { id: string; authorId: string; theme: string; text: s
 export type Reward = { id: string; title: string };
 export type DoneMission = { id: string; by: string; missionId: string; note?: string; day: string; at: string; seen: boolean };
 export type AdAward = { id: string; sticker: string; from: string; to: string; status: 'open' | 'accepted' | 'declined' };
+export type Vonk = { id: string; from: string; day: string; at: string; reply?: VonkReply };
+/** vuur: you both want it a lot; lucht: you both feel like it. Below that nothing is shown, to either of you. */
+export type SparkMatch = 'vuur' | 'lucht';
 export type AfterDark = {
   mine?: { on: boolean; level: AdLevel };
   partnerOn: boolean;
@@ -41,6 +44,13 @@ export type AfterDark = {
   /** Wishes you both answered with ja or misschien. A partner's nee is never shown. */
   matches: { wishId: string; both: 'ja' | 'misschien' }[];
   awards: AdAward[];
+  /** Today's spark. The partner's number itself never reaches the screen, only a match. */
+  spark: { mine?: number; match?: SparkMatch };
+  /** Weekday on which your sparks match most often, once it happened at least twice. */
+  rhythm?: string;
+  vonken: Vonk[];
+  align: Record<string, { mine?: number; partner?: number; partnerDone: boolean }>;
+  trophies: Set<string>;
 };
 export type WeekDay = { day: string; label: string; checkins: number; acts: number; today: boolean };
 
@@ -75,11 +85,23 @@ export type CoupleState = {
   confirmedActs: number;
   week: WeekDay[];
   afterDark: AfterDark;
+  /** Number of different weeks in which you played a game together. */
+  playWeeks: number;
+  playedThisWeek: boolean;
   unlocked: Set<string>; // achievement ids
   items: Set<HouseItemId>;
 };
 
 export const XP_PER_LEVEL = 80;
+/** Weeks of playing together for the trophy "Couples who play together, stay together". */
+export const PLAY_WEEKS = 4;
+
+/** The Monday of the week the date falls in, as a day key. */
+export function weekKey(date = new Date()): string {
+  return dayKey(new Date(date.getFullYear(), date.getMonth(), date.getDate() - ((date.getDay() + 6) % 7)));
+}
+
+export const weekdayNames = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'];
 
 export function dayKey(date = new Date()): string {
   const y = date.getFullYear();
@@ -142,13 +164,17 @@ export function deriveState(all: SamenEvent[], myId: string, memberIds: string[]
     acts: [],
     confirmedActs: 0,
     week: [],
-    afterDark: { partnerOn: false, active: false, level: 1, wishes: {}, matches: [], awards: [] },
+    afterDark: { partnerOn: false, active: false, level: 1, wishes: {}, matches: [], awards: [], spark: {}, vonken: [], align: {}, trophies: new Set() },
+    playWeeks: 0,
+    playedThisWeek: false,
     unlocked: new Set(),
     items: new Set(),
   };
 
   const checkins = new Map<string, { mine?: CheckInPayload; partner?: CheckInPayload }>();
-  const kjmRounds = new Map<number, { mine?: KjmSubmission; partner?: KjmSubmission }>();
+  const kjmRounds = new Map<number, { mine?: KjmSubmission; partner?: KjmSubmission; at?: string }>();
+  const sparks = new Map<string, { mine?: number; partner?: number }>();
+  const vonkReplies = new Map<string, VonkReply>();
   const rewards = new Map<string, Reward>();
   const rewardTitles = new Map<string, string>();
   const reflexResults: { winnerId: string | null; at: string; id: string }[] = [];
@@ -181,6 +207,7 @@ export function deriveState(all: SamenEvent[], myId: string, memberIds: string[]
       case 'kjm.submit': {
         const r = kjmRounds.get(e.payload.round) ?? {};
         r[mine ? 'mine' : 'partner'] = { self: e.payload.self, guess: e.payload.guess };
+        r.at = e.createdAt;
         kjmRounds.set(e.payload.round, r);
         break;
       }
@@ -251,6 +278,25 @@ export function deriveState(all: SamenEvent[], myId: string, memberIds: string[]
         // Only the one who received the sticker decides.
         if (state.afterDark.awards.some(a => a.id === e.payload.awardId && a.to === e.authorId)) awardStatus.set(e.payload.awardId, e.payload.accept ? 'accepted' : 'declined');
         break;
+      case 'ad.spark': {
+        // You may change your mind during the day; the latest answer counts.
+        const s = sparks.get(e.payload.day) ?? {};
+        s[mine ? 'mine' : 'partner'] = e.payload.level;
+        sparks.set(e.payload.day, s);
+        break;
+      }
+      case 'ad.vonk':
+        state.afterDark.vonken.push({ id: e.id, from: e.authorId, day: e.payload.day, at: e.createdAt });
+        break;
+      case 'ad.vonkReply':
+        // Only the one who received the vonk answers it.
+        if (state.afterDark.vonken.some(v => v.id === e.payload.vonkId && v.from !== e.authorId)) vonkReplies.set(e.payload.vonkId, e.payload.reply);
+        break;
+      case 'ad.align': {
+        const a = (state.afterDark.align[e.payload.questionId] ??= { partnerDone: false });
+        a[mine ? 'mine' : 'partner'] = e.payload.answer;
+        break;
+      }
     }
   }
 
@@ -273,6 +319,33 @@ export function deriveState(all: SamenEvent[], myId: string, memberIds: string[]
   }
   for (const a of ad.awards) a.status = awardStatus.get(a.id) ?? 'open';
   ad.awards.reverse();
+  const matchOf = (s?: { mine?: number; partner?: number }): SparkMatch | undefined => {
+    if (s?.mine === undefined || s.partner === undefined) return undefined;
+    const low = Math.min(s.mine, s.partner);
+    return low >= 3 ? 'vuur' : low >= 2 ? 'lucht' : undefined;
+  };
+  const todaySpark = sparks.get(state.today.day);
+  ad.spark = { mine: todaySpark?.mine, match: matchOf(todaySpark) };
+  const byWeekday = new Map<number, number>();
+  let fireDays = 0;
+  for (const [day, s] of sparks) {
+    const m = matchOf(s);
+    if (!m) continue;
+    if (m === 'vuur') fireDays += 1;
+    const [y, mo, d] = day.split('-').map(Number);
+    const wd = new Date(y, mo - 1, d).getDay();
+    byWeekday.set(wd, (byWeekday.get(wd) ?? 0) + 1);
+  }
+  const best = [...byWeekday].sort((a, b) => b[1] - a[1])[0];
+  if (best && best[1] >= 2) ad.rhythm = weekdayNames[best[0]];
+  for (const v of ad.vonken) v.reply = vonkReplies.get(v.id);
+  ad.vonken.reverse();
+  for (const [id, a] of Object.entries(ad.align)) a.partnerDone = partnerSealedKeys.has(`ad:align:${id}`);
+  for (const q of alignQuestions) {
+    if (partnerSealedKeys.has(`ad:align:${q.id}`)) ad.align[q.id] ??= { partnerDone: true };
+  }
+  if (alignQuestions.every(q => ad.align[q.id]?.mine !== undefined && ad.align[q.id]?.partner !== undefined)) ad.trophies.add('op-een-lijn');
+  if (fireDays >= 3) ad.trophies.add('vonkenregen');
 
   // Cards
   for (const card of allCards) {
@@ -302,6 +375,17 @@ export function deriveState(all: SamenEvent[], myId: string, memberIds: string[]
   }
   const open = kjmRounds.get(round);
   state.kjm = { round, mine: open?.mine, partnerDone: partnerSealedKeys.has(`kjm:${round}`) };
+
+  // Couples who play together, stay together: count the weeks in which you played.
+  const playWeeks = new Set<string>();
+  const weekOf = (at: string) => weekKey(new Date(at));
+  for (const r of reflexResults) playWeeks.add(weekOf(r.at));
+  for (const r of state.kjmHistory) {
+    const at = kjmRounds.get(r.round)?.at;
+    if (at) playWeeks.add(weekOf(at));
+  }
+  state.playWeeks = playWeeks.size;
+  state.playedThisWeek = playWeeks.has(weekKey());
 
   // Wins and rewards
   for (const r of reflexResults) {
@@ -366,11 +450,12 @@ export function deriveState(all: SamenEvent[], myId: string, memberIds: string[]
     verwenmoment: state.claims.some(c => c.redeemed),
     'kompas-ontdekkers': !!state.loveLang.mine && !!state.loveLang.partner,
     spelletjesavond: state.gamesPlayed >= 5,
+    'samen-spelen': state.playWeeks >= PLAY_WEEKS,
   };
   for (const a of achievements) {
     if (checks[a.id]) {
       state.unlocked.add(a.id);
-      state.items.add(a.item);
+      if (a.item) state.items.add(a.item);
     }
   }
 

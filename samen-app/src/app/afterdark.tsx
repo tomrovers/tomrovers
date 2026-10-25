@@ -4,45 +4,22 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/icon';
+import { Btn, Chip, T } from '@/components/night';
+import { VonkPanel } from '@/components/vonk';
 import { actions } from '@/lib/actions';
-import { adCards, adLevels, adStickerById, adStickers, wishes, type AdLevel, type WishAnswer } from '@/lib/afterdark';
+import { adCards, adLevels, adStickerById, adStickers, alignmentOf, alignQuestions, wishes, type AdLevel, type Alignment, type WishAnswer } from '@/lib/afterdark';
 import { nameOf } from '@/lib/people';
 import { useCouple } from '@/lib/store';
-import { fonts, radius, space } from '@/theme';
+import { fonts, night, radius, space } from '@/theme';
 
-// After Dark has its own night look, so it never feels like part of the everyday screens.
-const night = {
-  bg: '#24142B',
-  card: '#33203B',
-  cardHi: '#43294D',
-  line: '#4E3459',
-  text: '#F7E9F0',
-  muted: '#C7AFC9',
-  rose: '#FF7AA8',
-  gold: '#F2C14E',
-};
+const alignLabel: Record<Alignment, string> = { samen: 'Op één lijn 💞', dichtbij: 'Dicht bij elkaar', verschil: 'Hier verschillen jullie' };
 
-const T = ({ children, style, kind = 'body' }: { children: React.ReactNode; style?: object; kind?: 'h1' | 'h2' | 'body' | 'small' | 'tag' }) => (
-  <Text style={[styles[kind], style]}>{children}</Text>
-);
+const adTrophies = [
+  { id: 'op-een-lijn', emoji: '💞', name: 'Op één lijn', how: 'Jullie beantwoordden allebei alle vragen bij Afstemmen.' },
+  { id: 'vonkenregen', emoji: '🎆', name: 'Vonkenregen', how: 'Op drie dagen hadden jullie allebei veel zin.' },
+];
 
-function Chip({ label, on, onPress }: { label: string; on?: boolean; onPress: () => void }) {
-  return (
-    <Pressable onPress={onPress} accessibilityRole="button" accessibilityState={{ selected: on }} style={[styles.chip, on && styles.chipOn]}>
-      <Text style={[styles.chipText, on && { color: night.bg }]}>{label}</Text>
-    </Pressable>
-  );
-}
-
-function Btn({ title, onPress, ghost, disabled }: { title: string; onPress: () => void; ghost?: boolean; disabled?: boolean }) {
-  return (
-    <Pressable onPress={onPress} disabled={disabled} accessibilityRole="button" style={({ pressed }) => [styles.btn, ghost && styles.btnGhost, (pressed || disabled) && { opacity: disabled ? 0.4 : 0.8 }]}>
-      <Text style={[styles.btnText, ghost && { color: night.text }]}>{title}</Text>
-    </Pressable>
-  );
-}
-
-type Tab = 'kaarten' | 'wensen' | 'stickers';
+type Tab = 'vonk' | 'afstemmen' | 'kaarten' | 'wensen' | 'stickers';
 
 export default function AfterDark() {
   const { state, post } = useCouple();
@@ -50,7 +27,7 @@ export default function AfterDark() {
   const partnerName = nameOf(state, state.partnerId);
   const [level, setLevel] = useState<AdLevel>(ad.mine?.level ?? 2);
   const [adult, setAdult] = useState(false);
-  const [tab, setTab] = useState<Tab>('kaarten');
+  const [tab, setTab] = useState<Tab>('vonk');
 
   const levelName = adLevels.find(l => l.level === ad.level)?.name ?? '';
   const pendingForMe = ad.awards.filter(a => a.to === state.myId && a.status === 'open');
@@ -115,10 +92,53 @@ export default function AfterDark() {
                 </T>
               </View>
               <View style={styles.tabs}>
+                <Chip label="Vonk 🔥" on={tab === 'vonk'} onPress={() => setTab('vonk')} />
+                <Chip label="Afstemmen" on={tab === 'afstemmen'} onPress={() => setTab('afstemmen')} />
                 <Chip label="Kaarten" on={tab === 'kaarten'} onPress={() => setTab('kaarten')} />
                 <Chip label={`Wensen${ad.matches.length ? ` · ${ad.matches.length} ❤` : ''}`} on={tab === 'wensen'} onPress={() => setTab('wensen')} />
                 <Chip label={`Stickers${pendingForMe.length ? ' · nieuw' : ''}`} on={tab === 'stickers'} onPress={() => setTab('stickers')} />
               </View>
+
+              {tab === 'vonk' && (
+                <View style={styles.card}>
+                  <VonkPanel />
+                </View>
+              )}
+
+              {tab === 'afstemmen' && (
+                <>
+                  <T kind="small">
+                    Wat wil jij, en wat wil {partnerName}? Jullie zien nooit elkaars antwoord, alleen of jullie op één lijn zitten, met een tip om er samen over te praten. Je kunt je antwoord altijd aanpassen.
+                  </T>
+                  {alignQuestions.map(q => {
+                    const a = ad.align[q.id];
+                    const both = a?.mine !== undefined && a.partner !== undefined;
+                    const result = both ? alignmentOf(q, a.mine!, a.partner!) : undefined;
+                    return (
+                      <View key={q.id} style={styles.card}>
+                        <T kind="h2" style={{ fontSize: 16 }}>
+                          {q.question}
+                        </T>
+                        <View style={styles.tabs}>
+                          {q.options.map((o, i) => (
+                            <Chip key={o} label={o} on={a?.mine === i} onPress={() => post(actions.adAlign(q.id, i))} />
+                          ))}
+                        </View>
+                        {result ? (
+                          <View style={[styles.tip, result === 'samen' && { borderColor: night.gold }]}>
+                            <Text style={styles.matchTag}>{alignLabel[result]}</Text>
+                            <T kind="small" style={{ color: night.text }}>
+                              {q.tips[result]}
+                            </T>
+                          </View>
+                        ) : (
+                          <T kind="small">{a?.mine !== undefined ? `Wacht op ${partnerName}` : a?.partnerDone ? `${partnerName} heeft geantwoord. Nu jij!` : 'Nog niet beantwoord'}</T>
+                        )}
+                      </View>
+                    );
+                  })}
+                </>
+              )}
 
               {tab === 'kaarten' &&
                 adCards
@@ -216,6 +236,22 @@ export default function AfterDark() {
                     })}
                   </View>
 
+                  <T kind="h2">Jullie trofeeën</T>
+                  <View style={styles.grid}>
+                    {adTrophies.map(t => {
+                      const won = ad.trophies.has(t.id);
+                      return (
+                        <View key={t.id} style={[styles.sticker, !won && { opacity: 0.55 }]}>
+                          <Text style={{ fontSize: 30 }}>{won ? t.emoji : '🔒'}</Text>
+                          <T style={{ fontFamily: fonts.bold, textAlign: 'center' }}>{t.name}</T>
+                          <T kind="small" style={{ textAlign: 'center' }}>
+                            {t.how}
+                          </T>
+                        </View>
+                      );
+                    })}
+                  </View>
+
                   <T kind="h2">Ons ondeugende stickerboek</T>
                   {mineAccepted.length + theirsAccepted.length === 0 && <T kind="small">Nog leeg. Wie durft als eerste?</T>}
                   {[...mineAccepted, ...theirsAccepted].map(a => {
@@ -254,24 +290,14 @@ const styles = StyleSheet.create({
   scroll: { padding: 20, paddingBottom: 64 },
   inner: { width: '100%', maxWidth: 560, alignSelf: 'center', gap: space.md },
   row: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
-  h1: { fontFamily: fonts.black, fontSize: 28, lineHeight: 34, color: night.text },
-  h2: { fontFamily: fonts.bold, fontSize: 18, lineHeight: 24, color: night.text },
-  body: { fontFamily: fonts.regular, fontSize: 15, lineHeight: 22, color: night.text },
-  small: { fontFamily: fonts.regular, fontSize: 13, lineHeight: 18, color: night.muted },
-  tag: { fontFamily: fonts.bold, fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: night.rose },
   card: { backgroundColor: night.card, borderRadius: radius.lg, padding: space.lg, gap: space.sm, borderWidth: 1, borderColor: night.line },
   level: { borderRadius: radius.md, padding: space.md, borderWidth: 1, borderColor: night.line, gap: 2 },
   levelOn: { borderColor: night.rose, backgroundColor: night.cardHi },
   check: { flexDirection: 'row', gap: space.md, alignItems: 'center', paddingVertical: space.sm },
   box: { width: 24, height: 24, borderRadius: 6, borderWidth: 2, borderColor: night.muted, alignItems: 'center', justifyContent: 'center' },
-  btn: { minHeight: 50, borderRadius: radius.pill, backgroundColor: night.rose, alignItems: 'center', justifyContent: 'center', paddingHorizontal: space.xl },
-  btnGhost: { backgroundColor: 'transparent', borderWidth: 1, borderColor: night.line },
-  btnText: { fontFamily: fonts.bold, fontSize: 15, color: night.bg },
   tabs: { flexDirection: 'row', flexWrap: 'wrap', gap: space.sm },
-  chip: { borderRadius: radius.pill, paddingVertical: 8, paddingHorizontal: 14, borderWidth: 1, borderColor: night.line, backgroundColor: night.card },
-  chipOn: { backgroundColor: night.rose, borderColor: night.rose },
-  chipText: { fontFamily: fonts.bold, fontSize: 13, color: night.text },
   match: { flexDirection: 'row', alignItems: 'center', gap: space.sm, paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: night.line },
+  tip: { borderRadius: radius.md, padding: space.md, borderWidth: 1, borderColor: night.line, gap: 4 },
   matchTag: { fontFamily: fonts.bold, fontSize: 11, color: night.gold },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: space.sm },
   sticker: { width: '31%', flexGrow: 1, backgroundColor: night.card, borderRadius: radius.md, padding: space.md, alignItems: 'center', gap: 4, borderWidth: 1, borderColor: night.line },

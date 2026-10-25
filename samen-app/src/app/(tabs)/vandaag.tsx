@@ -4,6 +4,7 @@ import { Pressable, Share, StyleSheet, Text, View } from 'react-native';
 
 import { Icon } from '@/components/icon';
 import { Body, Button, Card, Eyebrow, Field, H1, H2, Progress, Row, Screen, Small, Strong } from '@/components/ui';
+import { VonkPanel } from '@/components/vonk';
 import { actions } from '@/lib/actions';
 import { cards, cardThemes, gestures, moods, needs, randomCompliment } from '@/lib/content';
 import { loveLanguageLabel, missionById, missionOptions, type Mission } from '@/lib/missions';
@@ -12,7 +13,7 @@ import { daySuggestion, XP_PER_LEVEL } from '@/lib/state';
 import { stations } from '@/lib/stations';
 import { useCouple } from '@/lib/store';
 import type { GestureKind } from '@/lib/types';
-import { colors, fonts, radius, space, tones } from '@/theme';
+import { colors, fonts, night, radius, space, tones } from '@/theme';
 
 const moodLabel = (id: string) => moods.find(m => m.id === id);
 const needLabel = (id: string) => needs.find(n => n.id === id)?.label.toLowerCase();
@@ -90,8 +91,8 @@ export default function Vandaag() {
 
       {mode === 'demo' && sharedAvailable && (
         <Card tone="peach">
-          <H2>Dit is de demo met Sam</H2>
-          <Body>Sam is een nagespeelde partner. Wil je de app echt samen met je partner gebruiken? Stop dan de demo en begin samen op deze pagina.</Body>
+          <H2>Dit is de demo met Annelieke</H2>
+          <Body>Annelieke is hier een nagespeelde partner. Wil je de app echt samen met je partner gebruiken? Stop dan de demo en begin samen op deze pagina.</Body>
           <Button
             title="Stop de demo en begin samen"
             loading={switching}
@@ -250,6 +251,18 @@ export default function Vandaag() {
         )}
       </Step>
 
+      {state.afterDark.active && (
+        <View style={styles.tonight}>
+          <Row style={{ justifyContent: 'space-between' }}>
+            <Text style={styles.tonightTag}>After Dark · Vanavond</Text>
+            <Pressable onPress={() => router.push('/afterdark')} accessibilityRole="button" hitSlop={8}>
+              <Text style={styles.tonightLink}>Meer →</Text>
+            </Pressable>
+          </Row>
+          <VonkPanel compact />
+        </View>
+      )}
+
       {hasPartner && (
         <Card tone="white">
           <Strong>Zomaar iets liefs sturen</Strong>
@@ -282,7 +295,7 @@ export default function Vandaag() {
             <Pressable
               key={st.id}
               onPress={() => router.push(st.route)}
-              style={({ pressed }) => [styles.station, { backgroundColor: st.dark ? '#33203B' : tones[st.tone] }, pressed && { opacity: 0.8 }]}
+              style={({ pressed }) => [styles.station, { backgroundColor: st.dark ? night.card : tones[st.tone] }, pressed && { opacity: 0.8 }]}
               accessibilityRole="button">
               <Text style={{ fontSize: 26 }}>{st.emoji}</Text>
               <Strong style={st.dark && { color: '#F7E9F0' }}>{st.title}</Strong>
@@ -314,6 +327,9 @@ const styles = StyleSheet.create({
   dayCard: { borderRadius: radius.lg, padding: space.lg, gap: space.sm },
   dayCardText: { fontFamily: fonts.bold, fontSize: 18, lineHeight: 24, color: colors.ink },
   gestures: { flexDirection: 'row', gap: space.sm },
+  tonight: { backgroundColor: night.bg, borderRadius: radius.lg, padding: space.lg, gap: space.sm },
+  tonightTag: { fontFamily: fonts.bold, fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: night.rose },
+  tonightLink: { fontFamily: fonts.bold, fontSize: 13, color: night.muted },
   gesture: { flex: 1, backgroundColor: colors.cream, borderRadius: radius.md, paddingVertical: space.sm, alignItems: 'center', gap: 2 },
   gestureLabel: { fontFamily: fonts.bold, fontSize: 11, color: colors.plum },
   stations: { flexDirection: 'row', flexWrap: 'wrap', gap: space.md },

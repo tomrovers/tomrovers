@@ -60,7 +60,11 @@ export type EventBody =
   | { type: 'ad.optin'; payload: { on: boolean; level: 1 | 2 | 3 } }
   | { type: 'ad.wish'; payload: { wishId: string; answer: 'ja' | 'misschien' | 'nee' } }
   | { type: 'ad.award'; payload: { sticker: string; to: string } }
-  | { type: 'ad.accept'; payload: { awardId: string; accept: boolean } };
+  | { type: 'ad.accept'; payload: { awardId: string; accept: boolean } }
+  | { type: 'ad.spark'; payload: { day: string; level: number } }
+  | { type: 'ad.vonk'; payload: { day: string } }
+  | { type: 'ad.vonkReply'; payload: { vonkId: string; reply: 'ja' | 'later' | 'knuffel' } }
+  | { type: 'ad.align'; payload: { questionId: string; answer: number } };
 
 export type EventType = EventBody['type'];
 

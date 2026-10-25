@@ -1,6 +1,6 @@
 import { kjmRoundQuestions } from '../content';
 import { kindById } from '../house/catalog';
-import { adStickers, wishes } from '../afterdark';
+import { adStickers, alignQuestions, wishes } from '../afterdark';
 import { missions } from '../missions';
 import { besideItem, blockedTiles, freeTile, roomItems, tilesOf, type HouseLayout, type Presence } from '../house/layout';
 import { dayKey } from '../state';
@@ -17,6 +17,8 @@ const ME = 'demo-me';
 const PARTNER = 'demo-partner';
 const COUPLE = 'demo-couple';
 
+/** The simulated partner in the demo. */
+const PARTNER_NAME = 'Annelieke';
 const partnerAvatar: AvatarConfig = { skin: 1, hair: 1, hairColor: 3, facialHair: 0, outfit: 2, accessory: 2 };
 
 const cardAnswers: Record<string, string[]> = {
@@ -41,7 +43,7 @@ export class DemoBackend implements Backend {
   private house: HouseLayout | null = null;
   private houseListeners = new Set<(l: HouseLayout | null) => void>();
   private mine: Presence | null = null;
-  private sam: Presence | null = null;
+  private partner: Presence | null = null;
   private presenceListeners = new Set<(p: Presence[]) => void>();
   private wander: ReturnType<typeof setInterval> | null = null;
 
@@ -49,6 +51,10 @@ export class DemoBackend implements Backend {
     try {
       const raw = await storage.load(KEY);
       if (raw) this.data = JSON.parse(raw);
+      // Earlier demos had a partner called Sam; the demo partner is Annelieke now.
+      for (const e of this.data.events) {
+        if (e.type === 'profile' && e.authorId === PARTNER) e.payload = { ...e.payload, name: PARTNER_NAME };
+      }
       const house = await storage.load(HOUSE_KEY);
       if (house) this.house = JSON.parse(house);
     } catch {
@@ -80,7 +86,7 @@ export class DemoBackend implements Backend {
 
   async createCouple(): Promise<Session> {
     this.data = { coupleId: COUPLE, events: [] };
-    this.add(PARTNER, { type: 'profile', payload: { name: 'Sam', avatar: partnerAvatar }, visibility: 'public' });
+    this.add(PARTNER, { type: 'profile', payload: { name: PARTNER_NAME, avatar: partnerAvatar }, visibility: 'public' });
     this.add(PARTNER, { type: 'gesture', payload: { kind: 'hartje' }, visibility: 'public' });
     await this.save();
     return this.session();
@@ -139,14 +145,14 @@ export class DemoBackend implements Backend {
   setPresence(p: Presence) {
     const moved = this.mine?.room !== p.room;
     this.mine = p;
-    // Sam follows you into a new room after a moment.
-    if (moved) setTimeout(() => this.samWalks(), 1200);
+    // Annelieke follows you into a new room after a moment.
+    if (moved) setTimeout(() => this.partnerWalks(), 1200);
   }
 
   subscribePresence(onChange: (others: Presence[]) => void) {
     this.presenceListeners.add(onChange);
-    if (this.sam) onChange([this.sam]);
-    this.wander ??= setInterval(() => this.samWalks(), 9000);
+    if (this.partner) onChange([this.partner]);
+    this.wander ??= setInterval(() => this.partnerWalks(), 9000);
     return () => {
       this.presenceListeners.delete(onChange);
       if (!this.presenceListeners.size && this.wander) {
@@ -156,8 +162,8 @@ export class DemoBackend implements Backend {
     };
   }
 
-  /** Sam strolls around the room you are in, and now and then sits down. */
-  private samWalks(toYou = false) {
+  /** Annelieke strolls around the room you are in, and now and then sits down. */
+  private partnerWalks(toYou = false) {
     if (!this.mine) return;
     const items = roomItems(this.house, this.mine.room);
     const blocked = blockedTiles(items);
@@ -174,7 +180,7 @@ export class DemoBackend implements Backend {
       const [gx, gy] = freeTile(blocked, [me]);
       spot = { ...spot, gx, gy };
     }
-    this.sam = spot;
+    this.partner = spot;
     this.presenceListeners.forEach(l => l([spot]));
   }
 
@@ -188,7 +194,7 @@ export class DemoBackend implements Backend {
 
     switch (event.type) {
       case 'ad.optin':
-        // Sam is always in, at the boldest mood; the mildest of the two choices applies.
+        // Annelieke is always in, at the boldest mood; the mildest of the two choices applies.
         if (event.payload.on && !this.data.events.some(e => e.authorId === PARTNER && e.type === 'ad.optin')) {
           this.later(1500, () => this.add(PARTNER, { type: 'ad.optin', payload: { on: true, level: 3 }, visibility: 'public' }));
           this.later(6000, () => this.add(PARTNER, { type: 'ad.award', payload: { sticker: pick(adStickers).id, to: ME }, visibility: 'public' }));
@@ -199,6 +205,22 @@ export class DemoBackend implements Backend {
         if (w) this.later(1200, () => this.add(PARTNER, { type: 'ad.wish', payload: { wishId: w.id, answer: pick(['ja', 'ja', 'misschien', 'nee']) }, visibility: 'sealed', sealKey }));
         break;
       }
+      case 'ad.spark':
+        // Annelieke answers once a day, with some zin: 2 to 4 flames.
+        this.later(1500, () => this.add(PARTNER, { type: 'ad.spark', payload: { day: event.payload.day, level: rand(2, 4) }, visibility: 'sealed', sealKey }));
+        // ... and sends a vonk of their own, so you can see what receiving one looks like.
+        if (event.payload.level >= 2 && !this.data.events.some(e => e.authorId === PARTNER && e.type === 'ad.vonk' && e.payload.day === event.payload.day)) {
+          this.later(5000, () => this.add(PARTNER, { type: 'ad.vonk', payload: { day: event.payload.day }, visibility: 'public' }));
+        }
+        break;
+      case 'ad.align': {
+        const q = alignQuestions.find(x => x.id === event.payload.questionId);
+        if (q) this.later(1200, () => this.add(PARTNER, { type: 'ad.align', payload: { questionId: q.id, answer: rand(0, q.options.length - 1) }, visibility: 'sealed', sealKey }));
+        break;
+      }
+      case 'ad.vonk':
+        this.later(2000, () => this.add(PARTNER, { type: 'ad.vonkReply', payload: { vonkId: id, reply: 'ja' }, visibility: 'public' }));
+        break;
       case 'ad.award':
         this.later(2000, () => this.add(PARTNER, { type: 'ad.accept', payload: { awardId: id, accept: true }, visibility: 'public' }));
         break;
@@ -206,7 +228,7 @@ export class DemoBackend implements Backend {
         this.later(3000, () => this.add(PARTNER, { type: 'mission.seen', payload: { doneId: id }, visibility: 'public' }));
         break;
       case 'checkin': {
-        // Sam does something sweet for you too, once a day.
+        // Annelieke does something sweet for you too, once a day.
         const today = dayKey();
         if (!this.data.events.some(e => e.authorId === PARTNER && e.type === 'mission.done' && e.payload.day === today)) {
           const m = pick(missions);
@@ -256,7 +278,7 @@ export class DemoBackend implements Backend {
         }
         break;
       case 'gesture':
-        setTimeout(() => this.samWalks(true), 600);
+        setTimeout(() => this.partnerWalks(true), 600);
         if (Math.random() < 0.5) {
           this.later(2500, () => this.add(PARTNER, { type: 'gesture', payload: { kind: pick(['hartje', 'knuffel', 'compliment']) }, visibility: 'public' }));
         }

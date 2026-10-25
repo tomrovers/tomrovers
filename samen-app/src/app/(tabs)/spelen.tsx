@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 
 import { Body, Card, Eyebrow, H1, H2, Row, Screen, Small, Strong } from '@/components/ui';
 import { nameOf } from '@/lib/people';
+import { PLAY_WEEKS } from '@/lib/state';
 import { useCouple } from '@/lib/store';
 
 export default function Spelen() {
@@ -16,6 +17,23 @@ export default function Spelen() {
       <Eyebrow>Samen Playground</Eyebrow>
       <H1>Een potje voor de lol</H1>
       <Body>Wie wint, kiest een beloning uit jullie beloningenpot.</Body>
+
+      <Card tone={state.playWeeks >= PLAY_WEEKS ? 'mint' : 'peach'} onPress={() => router.push('/prestaties')}>
+        <Row>
+          <Body style={{ fontSize: 36 }}>{state.playWeeks >= PLAY_WEEKS ? '🏆' : '🎲'}</Body>
+          <Body style={{ flex: 1 }}>
+            <Strong>Couples who play together, stay together</Strong>
+          </Body>
+        </Row>
+        {state.playWeeks >= PLAY_WEEKS ? (
+          <Small>Trofee verdiend! Jullie speelden in {state.playWeeks} verschillende weken samen.</Small>
+        ) : (
+          <Small>
+            Speel in {PLAY_WEEKS} verschillende weken samen een spel voor deze trofee. Nu: {state.playWeeks} van {PLAY_WEEKS}
+            {state.playedThisWeek ? ' · deze week al gespeeld ✓' : ' · deze week nog niet'}
+          </Small>
+        )}
+      </Card>
 
       <Card tone="lav">
         <Row style={{ justifyContent: 'space-around' }}>

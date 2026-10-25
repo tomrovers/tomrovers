@@ -138,9 +138,11 @@ export type HouseItemId =
   | 'kompas-schilderij'
   | 'lichtslinger';
 
-export type Achievement = { id: string; title: string; description: string; item: HouseItemId; itemLabel: string };
+/** Most achievements earn an item for the house; a trophy is an honour of its own. */
+export type Achievement = { id: string; title: string; description: string; item?: HouseItemId; itemLabel?: string; trophy?: string };
 
 export const achievements: Achievement[] = [
+  { id: 'samen-spelen', title: 'Couples who play together, stay together', description: 'In vier verschillende weken samen een spel gespeeld.', trophy: '🏆' },
   { id: 'eerste-dagbeeld', title: 'Het eerste dagbeeld', description: 'Jullie checkten allebei op dezelfde dag in.', item: 'plant', itemLabel: 'Een plantje' },
   { id: 'qualitytime-helden', title: 'Qualitytime-helden', description: 'Zeven dagen samen ingecheckt.', item: 'sfeerlamp', itemLabel: 'Een gezellige sfeerlamp' },
   { id: 'de-charmeur', title: 'De Charmeur', description: 'Vijf complimenten gegeven.', item: 'fotolijst', itemLabel: 'Een gouden fotolijst' },

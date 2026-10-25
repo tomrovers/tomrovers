@@ -43,7 +43,7 @@ export default function Instellingen() {
         <H2>Jullie koppel</H2>
         {mode === 'demo' ? (
           <>
-            <Body>Je speelt de demo met Sam. Alles blijft op deze telefoon.</Body>
+            <Body>Je speelt de demo met Annelieke. Alles blijft op deze telefoon.</Body>
             {sharedAvailable && (
               <Button
                 title="Stop de demo en begin samen"

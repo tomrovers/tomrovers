@@ -36,3 +36,15 @@ export const fonts = {
 
 export const space = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 } as const;
 export const radius = { sm: 10, md: 16, lg: 22, pill: 999 } as const;
+
+/** After Dark has its own night look, so it never feels like part of the everyday screens. */
+export const night = {
+  bg: '#24142B',
+  card: '#33203B',
+  cardHi: '#43294D',
+  line: '#4E3459',
+  text: '#F7E9F0',
+  muted: '#C7AFC9',
+  rose: '#FF7AA8',
+  gold: '#F2C14E',
+} as const;

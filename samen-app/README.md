@@ -10,16 +10,16 @@ zodat één codebase werkt op iPhone, Android en het web.
 | Onderdeel | Wat je kunt doen |
 |---|---|
 | **Welkom & LoveGotchi** | Naam invullen en je eigen mini-jij maken (huid, kapsel, haarkleur, baard, outfit, accessoire). |
-| **Koppelen** | Een koppelcode van 6 tekens maken of invullen. Of de demo proberen met een gesimuleerde partner, Sam. |
+| **Koppelen** | Een koppelcode van 6 tekens maken of invullen. Of de demo proberen met een gesimuleerde partner, Annelieke. |
 | **Vandaag** | De dagelijkse kern op één scherm: de week in één oogopslag, je check-in, één klein gebaar voor je partner (gekozen uit drie voorstellen op basis van diens liefdestaal en behoefte), "Ik merkte het ❤️" voor wat je partner voor jou deed, en de gesprekskaart van de dag. Daaronder staan de andere plekken (zie `src/lib/stations.ts` en [FOCUS.md](FOCUS.md)). |
 | **Dagelijkse check-in** | Stemming, energie en behoefte. Na beide check-ins zie je een gedeeld dagbeeld met een voorstel voor de avond. |
-| **After Dark (18+)** | Gaat alleen open als jullie het allebei aanzetten; de mildste van jullie twee sferen (romantisch, flirterig, ongegeneerd fout) geldt, en wie het aanzet ziet niet of de ander dat al deed. Kaarten, een wensenlijst waarin je alleen de matches ziet, ondeugende stickers die de ander moet accepteren, en flirterige opdrachten in Vandaag. Alleen tekst, nooit expliciet. |
+| **After Dark (18+)** | Gaat alleen open als jullie het allebei aanzetten; de mildste van jullie twee sferen (romantisch, flirterig, ongegeneerd fout) geldt, en wie het aanzet ziet niet of de ander dat al deed. **Vonk**: dagelijks aantikken hoeveel zin je hebt (je ziet alleen een match, nooit een laag getal) en een vonk sturen. **Afstemmen**: acht vragen waarbij je alleen ziet of jullie op één lijn zitten, met een tip. Verder kaarten, een wensenlijst met alleen matches, stickers die de ander moet accepteren, trofeeën en flirterige opdrachten in Vandaag. Alleen tekst, nooit expliciet. |
 | **Gesprekskaarten** | 25 vragen in 5 thema's. Je ziet het antwoord van je partner pas na je eigen antwoord. Inzichten kun je in het Kompas bewaren. |
 | **Ken je mij?** | Vijf vragen over jezelf, daarna raad je wat je partner koos. Na beide inzendingen volgt de uitslag. |
 | **Reflex Battle** | Op één telefoon: wie tikt het snelst als het scherm roze wordt? Best of five. |
 | **Beloningenpot** | Samen beloningen kiezen. De winnaar kiest er een en jullie vinken af wanneer hij verzilverd is. |
 | **Kompas** | Liefdestalen invullen, gedeeld of alleen voor jezelf, met een dagelijkse tip. Plus bewaarde inzichten. |
-| **Prestaties** | 9 prestaties. Elke prestatie levert een meubel op voor in de opslag (plantje, sfeerlamp, gouden fotolijst …). |
+| **Prestaties** | 10 prestaties, waaronder de trofee *Couples who play together, stay together* (in vier verschillende weken samen spelen). De andere leveren een meubel op voor in de opslag (plantje, sfeerlamp, gouden fotolijst …). |
 
 **Privacy zit in de database zelf**: check-ins en antwoorden kan je partner pas lezen als jullie allebei hebben
 ingevuld. Notities "alleen voor mij" kan alleen jij lezen. Dat regelt de server, niet alleen de app.
@@ -32,7 +32,7 @@ Open de webversie die Claude heeft gepubliceerd (de link staat in het gesprek). 
   gedeelde database (`src/lib/backend/shared.ts`), dus er is geen server nodig. Deel de pagina via het Share-menu van
   claude.ai met je partner, met de rol **Editor** (anders kan je partner niets opslaan). Je partner heeft een
   claude.ai-account nodig.
-- **Probeer de demo**: je speelt met een gesimuleerde partner, Sam, en alles blijft in je eigen browser.
+- **Probeer de demo**: je speelt met een gesimuleerde partner, Annelieke, en alles blijft in je eigen browser.
 
 In de testversie verbergt de app zelf een check-in of antwoord totdat jullie allebei hebben ingevuld. In de echte app
 met Supabase dwingt de server dat af. Notities "alleen voor mij" zijn ook in de testversie echt privé.
@@ -66,7 +66,7 @@ Zonder server-instellingen werkt alleen de demo. Voor echte koppels met twee tel
 Expo bouwt de app in de cloud; je hebt er geen Android Studio voor nodig.
 
 1. Maak een gratis account op <https://expo.dev> en maak onder **Account settings → Access tokens** een token.
-2. Zorg voor de Supabase-gegevens uit stap 3. Zonder die gegevens bevat de app alleen de demo met Sam.
+2. Zorg voor de Supabase-gegevens uit stap 3. Zonder die gegevens bevat de app alleen de demo met Annelieke.
 3. Voer uit (met `EXPO_TOKEN`, `EXPO_PUBLIC_SUPABASE_URL` en `EXPO_PUBLIC_SUPABASE_ANON_KEY` als omgevingsvariabelen):
    ```sh
    ./scripts/build-android.sh
@@ -95,7 +95,8 @@ testen door minimaal 12 testers voordat je mag publiceren. Met een organisatie-a
 4. **Dagelijkse herinnering** – een melding op een zelfgekozen tijd voor de check-in (`expo-notifications`).
 5. **Privacyverklaring en voorwaarden** – nodig voor beide stores. Gegevens over intimiteit vallen onder de strengste AVG-categorie: vraag uitdrukkelijk toestemming.
 6. **Winkelpagina** – schermafbeeldingen, beschrijving, leeftijdsclassificatie en Apple's "App Privacy"-labels.
-7. **Later** – After Dark (houd het bij tekst, zonder expliciete beelden), meer minigames, huisjes bezoeken en 2-tegen-2 (Couples Plus), en Samen Singles.
+7. **Wensen en vonken op de server** – in de echte app moet de server zelf alleen matches teruggeven (een functie zoals `revealed_sealed_events`), zodat een nee of een laag getal de telefoon van de partner nooit bereikt.
+8. **Later** – meer minigames, huisjes bezoeken en 2-tegen-2 (Couples Plus), en Samen Singles.
 
 ## Hoe de code in elkaar zit
 

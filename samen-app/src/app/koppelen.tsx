@@ -60,7 +60,7 @@ export default function Koppelen() {
 
       <Card tone="peach">
         <H2>Eerst even rondkijken?</H2>
-        <Small>In de demo speel je met een gesimuleerde partner, Sam. Alles blijft op deze telefoon.</Small>
+        <Small>In de demo speel je met een gesimuleerde partner, Annelieke. Alles blijft op deze telefoon.</Small>
         <Button title="Probeer de demo" variant="secondary" onPress={run('demo', startDemo)} loading={busy === 'demo'} />
       </Card>
     </Screen>

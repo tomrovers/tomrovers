@@ -73,4 +73,17 @@ export const actions = {
   }),
   adAward: (sticker: string, to: string): NewEvent => ({ type: 'ad.award', payload: { sticker, to }, visibility: 'public' }),
   adAccept: (awardId: string, accept: boolean): NewEvent => ({ type: 'ad.accept', payload: { awardId, accept }, visibility: 'public' }),
+  /** Sealed per day: the partner's level only opens up once you set yours, and the screen only ever shows a match. */
+  adSpark: (level: number): NewEvent => {
+    const day = dayKey();
+    return { type: 'ad.spark', payload: { day, level }, visibility: 'sealed', sealKey: `ad:spark:${day}` };
+  },
+  adVonk: (): NewEvent => ({ type: 'ad.vonk', payload: { day: dayKey() }, visibility: 'public' }),
+  adVonkReply: (vonkId: string, reply: 'ja' | 'later' | 'knuffel'): NewEvent => ({ type: 'ad.vonkReply', payload: { vonkId, reply }, visibility: 'public' }),
+  adAlign: (questionId: string, answer: number): NewEvent => ({
+    type: 'ad.align',
+    payload: { questionId, answer },
+    visibility: 'sealed',
+    sealKey: `ad:align:${questionId}`,
+  }),
 };

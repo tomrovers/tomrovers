@@ -146,8 +146,8 @@ export default function Thuis() {
 
       {mode === 'demo' && sharedAvailable && (
         <Card tone="peach">
-          <H2>Dit is de demo met Sam</H2>
-          <Body>Sam is een nagespeelde partner. Wil je het huisje echt samen met je partner gebruiken? Stop dan de demo en begin samen op deze pagina.</Body>
+          <H2>Dit is de demo met Annelieke</H2>
+          <Body>Annelieke is hier een nagespeelde partner. Wil je het huisje echt samen met je partner gebruiken? Stop dan de demo en begin samen op deze pagina.</Body>
           <Button
             title="Stop de demo en begin samen"
             loading={switching}
