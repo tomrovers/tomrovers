@@ -20,5 +20,7 @@ Read FOCUS.md and README.md first. Talk to Tom in Dutch; he has no programming e
    directory `samen-app`; Supabase settings are in eas.json. First preview APK: build 77a99a76-3b7e-42f2-b54a-f1bbe2d69347
    (expires 2026-11-08). Start builds with the Expo connector's `build_run` (profile `preview`, ANDROID, branch
    `claude/new-session-v9garq`). Expo prompts for a usage budget don't reach Tom: use confirmationMode "conversation".
+- `scripts/server-check.mjs` checks the privacy rules on the real server (16 checks, all pass); the app was also
+   tested end to end against it in a browser (linking, check-in, act, After Dark, Vonk, Afstemmen).
 4. Tom and Annelieke use the APK daily for two weeks; then store requirements (see "Nog te doen vóór de lancering" in README:
    login, account deletion, reminders, RevenueCat, privacy policy, age rating, store listing).
