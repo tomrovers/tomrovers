@@ -150,9 +150,9 @@ $$;
 
 -- Signed-in users only (anonymous sign-ins also get the authenticated role).
 revoke execute on function public.create_couple(), public.join_couple(text), public.leave_couple(),
-  public.revealed_sealed_events(uuid) from public, anon;
+  public.revealed_sealed_events(uuid), public.is_member(uuid) from public, anon;
 grant execute on function public.create_couple(), public.join_couple(text), public.leave_couple(),
-  public.revealed_sealed_events(uuid) to authenticated;
+  public.revealed_sealed_events(uuid), public.is_member(uuid) to authenticated;
 
 -- Live updates ------------------------------------------------------------------------------------
 
