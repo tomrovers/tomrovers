@@ -26,4 +26,15 @@ Read FOCUS.md and README.md first. Talk to Tom in Dutch; he has no programming e
 - `scripts/server-check.mjs` checks the privacy rules on the real server (16 checks, all pass); the app was also
    tested end to end against it in a browser (linking, check-in, act, After Dark, Vonk, Afstemmen).
 4. Tom and Annelieke use the APK daily for two weeks; then store requirements (see "Nog te doen vóór de lancering" in README:
-   login, account deletion, reminders, RevenueCat, privacy policy, age rating, store listing).
+   login, account deletion, RevenueCat, privacy policy, age rating, store listing).
+5. Done: daily check-in reminder (`src/lib/reminder.ts`, card in `instellingen.tsx`, `useReminders()` in the tabs layout).
+   Local only, per phone: it plans 14 one-off DATE notifications (not a repeating one) so today's is skipped after you
+   check in; replanned on app open/foreground. No exact-alarm permission, so Android may deliver a few minutes late.
+   Checked in an EAS sandbox (tsc, eslint, web export, android prebuild all pass); not yet tried on a real phone.
+
+## Working without Node on Tom's computer
+Tom's laptop has no Node.js. To add packages or run tsc/eslint: push a temporary branch, start an EAS sandbox
+(`sandbox_create` with `gitRef`, LINUX MEDIUM, needs a usage budget approved by Tom in chat with confirmationMode
+"conversation"), run `npm ci` + `npx expo install …` there, and bring the change back as a base64 `git diff` applied
+locally with `git apply`; compare `git hash-object` on both sides. Note `expo prebuild` rewrites the package.json
+scripts; don't copy that back.

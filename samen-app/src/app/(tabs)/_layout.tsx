@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router/js-tabs';
 
 import { Icon, type IconName } from '@/components/icon';
+import { useReminders } from '@/lib/reminder';
 import { colors, fonts } from '@/theme';
 
 const tab = (title: string, icon: IconName) => ({
@@ -9,6 +10,7 @@ const tab = (title: string, icon: IconName) => ({
 });
 
 export default function TabLayout() {
+  useReminders();
   return (
     <Tabs
       screenOptions={{

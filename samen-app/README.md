@@ -13,6 +13,7 @@ zodat één codebase werkt op iPhone, Android en het web.
 | **Koppelen** | Een koppelcode van 6 tekens maken of invullen. Of de demo proberen met een gesimuleerde partner, Annelieke. |
 | **Vandaag** | De dagelijkse kern op één scherm: de week in één oogopslag, je check-in, één klein gebaar voor je partner (gekozen uit drie voorstellen op basis van diens liefdestaal en behoefte), "Ik merkte het ❤️" voor wat je partner voor jou deed, en de gesprekskaart van de dag. Daaronder staan de andere plekken (zie `src/lib/stations.ts` en [FOCUS.md](FOCUS.md)). |
 | **Dagelijkse check-in** | Stemming, energie en behoefte. Na beide check-ins zie je een gedeeld dagbeeld met een voorstel voor de avond. |
+| **Dagelijkse herinnering** | In Instellingen: een melding voor je check-in op een tijd die je zelf kiest (per telefoon). Heb je die dag al ingecheckt, dan komt er geen melding. Tik erop en de check-in gaat open. Alleen in de telefoon-app, niet op de testpagina. |
 | **After Dark (18+)** | Gaat alleen open als jullie het allebei aanzetten; de mildste van jullie twee sferen (romantisch, flirterig, ongegeneerd fout) geldt, en wie het aanzet ziet niet of de ander dat al deed. **Vonk**: dagelijks aantikken hoeveel zin je hebt (je ziet alleen een match, nooit een laag getal) en een vonk sturen. **Afstemmen**: acht vragen waarbij je alleen ziet of jullie op één lijn zitten, met een tip. Verder kaarten, een wensenlijst met alleen matches, stickers die de ander moet accepteren, trofeeën en flirterige opdrachten in Vandaag. Alleen tekst, nooit expliciet. |
 | **Gesprekskaarten** | 25 vragen in 5 thema's. Je ziet het antwoord van je partner pas na je eigen antwoord. Inzichten kun je in het Kompas bewaren. |
 | **Ken je mij?** | Vijf vragen over jezelf, daarna raad je wat je partner koos. Na beide inzendingen volgt de uitslag. |
@@ -94,10 +95,9 @@ testen door minimaal 12 testers voordat je mag publiceren. Met een organisatie-a
 1. **Betalen** – de eenmalige aankoop van €9,99 per koppel (met de partner gratis erbij) via RevenueCat. Daarvoor is een development build nodig, want het werkt niet in Expo Go.
 2. **Account herstellen** – accounts beginnen nu anoniem. Voeg inloggen met e-mail, Apple of Google toe, zodat je bij een nieuwe telefoon je gegevens terugkrijgt.
 3. **Account verwijderen in de app** – Apple verplicht dit. Ontkoppelen wist nu je eigen gegevens in het koppel, maar nog niet het account zelf.
-4. **Dagelijkse herinnering** – een melding op een zelfgekozen tijd voor de check-in (`expo-notifications`).
-5. **Privacyverklaring en voorwaarden** – nodig voor beide stores. Gegevens over intimiteit vallen onder de strengste AVG-categorie: vraag uitdrukkelijk toestemming.
-6. **Winkelpagina** – schermafbeeldingen, beschrijving, leeftijdsclassificatie en Apple's "App Privacy"-labels.
-7. **Later** – meer minigames, huisjes bezoeken en 2-tegen-2 (Couples Plus), en Samen Singles.
+4. **Privacyverklaring en voorwaarden** – nodig voor beide stores. Gegevens over intimiteit vallen onder de strengste AVG-categorie: vraag uitdrukkelijk toestemming.
+5. **Winkelpagina** – schermafbeeldingen, beschrijving, leeftijdsclassificatie en Apple's "App Privacy"-labels.
+6. **Later** – meer minigames, huisjes bezoeken en 2-tegen-2 (Couples Plus), en Samen Singles.
 
 ## Hoe de code in elkaar zit
 

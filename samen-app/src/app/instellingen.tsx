@@ -1,11 +1,64 @@
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Header } from '@/components/header';
-import { Body, Button, Card, H2, Screen, Small, Strong } from '@/components/ui';
+import { Body, Button, Card, Chip, Chips, H1, H2, Row, Screen, Small, Strong } from '@/components/ui';
 import { notify } from '@/lib/notify';
 import { nameOf } from '@/lib/people';
+import { allowReminders, cancelReminders, loadReminder, planReminders, remindersSupported, saveReminder, timeLabel, type Reminder } from '@/lib/reminder';
+import { dayKey } from '@/lib/state';
 import { useCouple } from '@/lib/store';
+
+function ReminderCard() {
+  const { state } = useCouple();
+  const [reminder, setReminder] = useState<Reminder | null>(null);
+  useEffect(() => {
+    void loadReminder().then(setReminder);
+  }, []);
+
+  if (!remindersSupported) {
+    return (
+      <Card tone="blue">
+        <H2>Dagelijkse herinnering</H2>
+        <Body>Een herinnering voor je check-in kun je aanzetten in de app op je telefoon.</Body>
+      </Card>
+    );
+  }
+  if (!reminder) return null;
+
+  const update = async (next: Reminder) => {
+    if (next.on && !reminder.on && !(await allowReminders())) {
+      notify('Meldingen staan uit', 'Zet meldingen voor Samen aan in de instellingen van je telefoon en probeer het daarna opnieuw.');
+      return;
+    }
+    setReminder(next);
+    await saveReminder(next);
+    const checkedInToday = !!state.today.mine && state.today.day === dayKey();
+    await planReminders(next, { checkedInToday, partnerName: nameOf(state, state.partnerId) });
+  };
+  const shift = (minutes: number) => {
+    const t = (reminder.hour * 60 + reminder.minute + minutes + 24 * 60) % (24 * 60);
+    void update({ ...reminder, hour: Math.floor(t / 60), minute: t % 60 });
+  };
+
+  return (
+    <Card tone="blue">
+      <H2>Dagelijkse herinnering</H2>
+      <Body>Een seintje voor je check-in, op een tijd die jou past. Heb je die dag al ingecheckt, dan krijg je niets.</Body>
+      <Chips>
+        <Chip label="Aan" selected={reminder.on} onPress={() => void update({ ...reminder, on: true })} />
+        <Chip label="Uit" selected={!reminder.on} onPress={() => void update({ ...reminder, on: false })} />
+      </Chips>
+      {reminder.on && (
+        <Row style={{ justifyContent: 'center' }} gap={16}>
+          <Button title="−" variant="secondary" onPress={() => shift(-30)} style={{ paddingHorizontal: 22 }} />
+          <H1 accessibilityLabel={`Herinnering om ${timeLabel(reminder)}`}>{timeLabel(reminder)}</H1>
+          <Button title="+" variant="secondary" onPress={() => shift(30)} style={{ paddingHorizontal: 22 }} />
+        </Row>
+      )}
+    </Card>
+  );
+}
 
 export default function Instellingen() {
   const { state, session, mode, leaveCouple, sharedAvailable, leaveDemoForShared } = useCouple();
@@ -21,6 +74,7 @@ export default function Instellingen() {
     }
     setBusy(true);
     try {
+      await cancelReminders();
       await leaveCouple();
       router.replace('/koppelen');
     } catch (e) {
@@ -63,6 +117,8 @@ export default function Instellingen() {
           </>
         )}
       </Card>
+
+      <ReminderCard />
 
       <Card tone="mint">
         <H2>Privacy</H2>

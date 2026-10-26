@@ -40,7 +40,7 @@ Wachtwoorden en sleutels staan hier bewust niet in.
 ## Roadmap naar de stores
 
 1. **Nu**: Tom en Annelieke gebruiken de Android-testversie twee weken elke dag. Het logo wordt afgemaakt.
-2. **Verplicht voor de stores**: inloggen met e-mail of Google, account verwijderen, dagelijkse herinnering,
+2. **Verplicht voor de stores**: inloggen met e-mail of Google, account verwijderen, dagelijkse herinnering (klaar),
    betalen (eenmalig €9,99 per koppel via RevenueCat), privacyverklaring en voorwaarden (AVG: gegevens over het
    seksleven), leeftijdsclassificatie (waarschijnlijk 18+), winkelpagina.
 3. **Gesloten test** met bevriende stellen.
