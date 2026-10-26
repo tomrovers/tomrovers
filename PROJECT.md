@@ -33,7 +33,7 @@ worden, en meer synchroniteit, ook op seksueel gebied. Van Tom (eenmanszaak Stor
 | Logo-ontwerpen | https://claude.ai/artifact/AWuDghr8ghgEHR4CRYc9oX |
 | Server (Supabase, Frankfurt) | https://supabase.com/dashboard/project/xxeiwtqnhbnppfeppdzb |
 | Builds (Expo) | https://expo.dev/accounts/stormvoerenterprise/projects/samen |
-| Nieuwste Android-testversie, met de nieuwe stijl en de dagelijkse herinnering (tot 9 november 2026) | https://expo.dev/accounts/stormvoerenterprise/projects/samen/builds/88e123be-9a44-419e-ad8b-e1def632ed31 |
+| Nieuwste Android-testversie: Claddagh met logo, nieuwe stijl en dagelijkse herinnering (tot 9 november 2026) | https://expo.dev/accounts/stormvoerenterprise/projects/samen/builds/d0e24426-26a0-4cb0-90f5-e0216788b7aa |
 
 Wachtwoorden en sleutels staan hier bewust niet in.
 

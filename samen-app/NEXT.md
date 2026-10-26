@@ -49,7 +49,10 @@ Read FOCUS.md and README.md first. Talk to Tom in Dutch; he has no programming e
    package, slug, scheme, folder and code names stay "samen" so installs update in place. ChatGPT's draft mark is in
    `src/components/logo.tsx` (`Logo`, `Brand`) on loading, welkom, koppelen and the top of Vandaag, and its Android
    layers, app icon (`icon.png` = logo on plum) and splash are in `assets/images/`. Tom wants it in now and refined
-   later; trademark check (TMview, classes 9/42/45) is still open before the stores.
+   later; trademark check (TMview, classes 9/42/45) is still open before the stores. Preview APK: build
+   d0e24426-26a0-4cb0-90f5-e0216788b7aa (expires 2026-11-09), linked in PROJECT.md while it was still building;
+   check with `build_info` that it finished. Its budget (3 builds, 90 sandbox min) has 2 builds and ~70 min left,
+   but a budget belongs to one conversation: a new session asks Tom for a new one.
 
 ## After every app change: update the test page too
 Tom wants a web test version he can open in Claude every time, not only the APK. In the same sandbox run as
