@@ -14,8 +14,11 @@ Read FOCUS.md and README.md first. Talk to Tom in Dutch; he has no programming e
 ## Next
 1. Done: migrations 0001 and 0002 are applied on Supabase (Tom pasted them; the connector's
    apply_migration asks a confirmation that does not reach Tom, so let him paste SQL in the SQL Editor).
-2. `0003_afterdark_privacy.sql` is written and tested with PGlite; check it is applied (`revealed_sealed_events`
-   should contain `align_of`). Check that anonymous sign-ins are on.
+2. Done (checked 2026-10-26 with the Supabase connector's execute_sql, which works for read queries):
+   0003 is applied (`revealed_sealed_events` contains `align_of`) and anonymous sign-ins work. On that date the
+   server had 0 couples and 0 events; all 8 anonymous users were from the test runs of 2026-10-25, so Tom and
+   Annelieke had not linked in the APK yet. Tom's computer has no Node.js, so typecheck/lint/server-check cannot run
+   locally until he installs it.
 3. Done: EAS project @stormvoerenterprise/samen (id cbd6a7fa-5a85-48d0-97e9-fb90e6794ad8), GitHub linked with base
    directory `samen-app`; Supabase settings are in eas.json. First preview APK: build 77a99a76-3b7e-42f2-b54a-f1bbe2d69347
    (expires 2026-11-08). Start builds with the Expo connector's `build_run` (profile `preview`, ANDROID, branch
