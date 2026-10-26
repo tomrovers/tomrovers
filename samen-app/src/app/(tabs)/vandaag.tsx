@@ -2,7 +2,7 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, Share, StyleSheet, Text, View } from 'react-native';
 
-import { Icon } from '@/components/icon';
+import { Icon, type IconName } from '@/components/icon';
 import { Body, Button, Card, Eyebrow, Field, H1, H2, Progress, Row, Screen, Small, Strong } from '@/components/ui';
 import { VonkPanel } from '@/components/vonk';
 import { actions } from '@/lib/actions';
@@ -17,13 +17,15 @@ import { colors, fonts, night, radius, space, tones } from '@/theme';
 
 const moodLabel = (id: string) => moods.find(m => m.id === id);
 const needLabel = (id: string) => needs.find(n => n.id === id)?.label.toLowerCase();
+const gestureIcon: Partial<Record<GestureKind, IconName>> = { compliment: 'flower', knuffel: 'hug', hartje: 'heart' };
 
-function Step({ n, done, title, children }: { n: number; done: boolean; title: string; children: React.ReactNode }) {
+/** One of the three daily steps. Only the step that is up next gets the strong look. */
+function Step({ n, done, next, title, children }: { n: number; done: boolean; next: boolean; title: string; children: React.ReactNode }) {
   return (
-    <Card tone="white" style={done && styles.stepDone}>
-      <Row>
-        <View style={[styles.stepNum, done && { backgroundColor: colors.success }]}>
-          <Text style={styles.stepNumText}>{done ? '✓' : n}</Text>
+    <Card tone="white" style={[next && styles.stepNext, done && styles.stepDone]}>
+      <Row style={{ marginBottom: 4 }}>
+        <View style={[styles.stepNum, next && { backgroundColor: colors.plum }, done && { backgroundColor: colors.success }]}>
+          {done ? <Icon name="check" color={colors.white} size={14} /> : <Text style={[styles.stepNumText, next && { color: colors.white }]}>{n}</Text>}
         </View>
         <H2 style={{ flex: 1 }}>{title}</H2>
       </Row>
@@ -67,6 +69,8 @@ export default function Vandaag() {
   const todayCard = open.length ? open[dayNumber % open.length] : undefined;
   const todayCardState = todayCard && state.cards[todayCard.id];
   const todayTheme = todayCard && cardThemes.find(t => t.id === todayCard.theme);
+  const cardDone = !todayCard || !!todayCardState?.mine;
+  const nextStep = !mine ? 1 : !done ? 2 : !cardDone ? 3 : 0;
 
   const sendGesture = async (kind: GestureKind) => {
     await post(actions.gesture(kind, kind === 'compliment' ? randomCompliment() : undefined));
@@ -79,13 +83,14 @@ export default function Vandaag() {
 
   return (
     <Screen>
-      <Row style={{ justifyContent: 'space-between' }}>
-        <View style={{ flex: 1 }}>
+      <Row style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <View style={{ flex: 1, gap: 2 }}>
           <Eyebrow>{dateLabel}</Eyebrow>
           <H1>{hasPartner ? `${state.me?.name ?? 'Jij'} & ${partnerName}` : 'Vandaag'}</H1>
+          <Body>Een klein moment. Meer van elkaar.</Body>
         </View>
-        <Pressable onPress={() => router.push('/instellingen')} accessibilityLabel="Instellingen" hitSlop={12}>
-          <Icon name="settings" color={colors.plum} size={26} />
+        <Pressable onPress={() => router.push('/instellingen')} accessibilityRole="button" accessibilityLabel="Instellingen" style={({ pressed }) => [styles.iconButton, pressed && { opacity: 0.7 }]}>
+          <Icon name="settings" color={colors.plum} size={22} />
         </Pressable>
       </Row>
 
@@ -128,22 +133,28 @@ export default function Vandaag() {
       <Card tone="pink">
         <Row style={{ justifyContent: 'space-between' }}>
           <Strong>Deze week samen</Strong>
-          <Small>
+          <Small style={{ color: colors.text }}>
             Level {state.level} · {Math.round(state.levelProgress * XP_PER_LEVEL)}/{XP_PER_LEVEL} XP
           </Small>
         </Row>
         <View style={styles.week}>
           {state.week.map(d => (
             <View key={d.day} style={styles.weekDay}>
-              <View style={[styles.weekDot, d.checkins === 2 && styles.weekDotBoth, d.acts > 0 && styles.weekDotLove, d.today && styles.weekDotToday]}>
-                <Text style={styles.weekDotText}>{d.acts > 0 ? '❤' : d.checkins === 2 ? '✓' : ''}</Text>
+              <View style={[styles.weekDot, d.today && styles.weekDotToday, d.checkins === 2 && styles.weekDotBoth, d.acts > 0 && styles.weekDotLove]}>
+                {d.acts > 0 ? (
+                  <Icon name="heart" color={colors.ink} size={14} />
+                ) : d.checkins === 2 ? (
+                  <Icon name="check" color={colors.white} size={14} />
+                ) : d.today ? (
+                  <Text style={styles.weekDotText}>{Number(d.day.slice(8))}</Text>
+                ) : null}
               </View>
               <Text style={[styles.weekLabel, d.today && { color: colors.plum }]}>{d.label}</Text>
             </View>
           ))}
         </View>
         <Progress value={state.levelProgress} />
-        <Small>✓ jullie checkten allebei in · ❤ een liefdevol gebaar werd opgemerkt. Een lege dag is gewoon een lege dag.</Small>
+        <Small style={{ color: colors.text }}>✓ Samen ingecheckt · ♥ Gebaar opgemerkt. Een lege dag is gewoon een lege dag.</Small>
       </Card>
 
       {/* Something your partner did for you comes first */}
@@ -156,16 +167,21 @@ export default function Vandaag() {
             <Strong>{m?.title ?? 'Een lief gebaar'}</Strong>
             {a.note ? <Body style={{ fontStyle: 'italic' }}>“{a.note}”</Body> : null}
             <Button title="Ik merkte het ❤️" onPress={() => post(actions.missionSeen(a.id))} />
-            <Small>Als je het opmerkt, krijgen jullie allebei 20 XP.</Small>
+            <Small style={{ color: colors.text }}>Als je het opmerkt, krijgen jullie allebei 20 XP.</Small>
           </Card>
         );
       })}
 
-      <Step n={1} done={!!mine} title="Hoe gaat het met je?">
+      <Row style={{ justifyContent: 'space-between', marginTop: space.sm }}>
+        <H2>Vandaag voor jullie</H2>
+        <Small>2 tot 5 minuten</Small>
+      </Row>
+
+      <Step n={1} done={!!mine} next={nextStep === 1} title="Hoe gaat het met je?">
         {!mine && (
           <>
-            <Small>Een korte check-in. {partnerName} ziet jouw antwoord pas als jullie allebei hebben ingevuld.</Small>
-            <Button title="Check in" onPress={() => router.push('/checkin')} />
+            <Body>{partnerName} ziet je antwoorden pas als jullie allebei hebben ingecheckt.</Body>
+            <Button title="Check in" icon="arrow" onPress={() => router.push('/checkin')} />
           </>
         )}
         {mine && !partner && (
@@ -189,26 +205,28 @@ export default function Vandaag() {
         )}
       </Step>
 
-      <Step n={2} done={!!done} title={`Iets voor ${partnerName}`}>
+      <Step n={2} done={!!done} next={nextStep === 2} title={`Iets voor ${partnerName}`}>
         {!picked && !done && (
           <>
             <Small>
-              Kies één klein gebaar voor vandaag.{' '}
+              Kies één klein gebaar. Je keuze blijft een verrassing.{' '}
               {state.loveLang.partner || partner ? `Afgestemd op wat ${partnerName} fijn vindt${partner ? ' en vandaag nodig heeft' : ''}.` : `Hoe meer jullie in het Kompas invullen, hoe beter dit past.`}
             </Small>
-            {options.map(m => (
-              <MissionOption key={m.id} m={m} onPick={() => post(actions.pickMission(m.id))} />
-            ))}
+            <View>
+              {options.map(m => (
+                <MissionOption key={m.id} m={m} onPick={() => post(actions.pickMission(m.id))} />
+              ))}
+            </View>
             <Button title="Andere voorstellen" variant="ghost" onPress={() => setRound(r => r + 1)} />
           </>
         )}
         {picked && !done && (
           <>
-            <Card tone="lav">
+            <View style={styles.picked}>
               <Text style={styles.optionTag}>{loveLanguageLabel[picked.lang]}</Text>
               <Strong>{picked.title}</Strong>
               <Body>{picked.detail}</Body>
-            </Card>
+            </View>
             <Small>{partnerName} ziet niet wat je gekozen hebt. Zo blijft het een verrassing.</Small>
             {note === null ? (
               <Row>
@@ -239,12 +257,15 @@ export default function Vandaag() {
         )}
       </Step>
 
-      <Step n={3} done={!todayCard || !!todayCardState?.mine} title="Gesprek van de dag">
+      <Step n={3} done={cardDone} next={nextStep === 3} title="Gesprek van de dag">
         {todayCard && todayTheme ? (
-          <Pressable onPress={() => router.push({ pathname: '/kaart/[id]', params: { id: todayCard.id } })} style={[styles.dayCard, { backgroundColor: tones[todayTheme.tone] }]} accessibilityRole="button">
-            <Small>{todayTheme.label}</Small>
+          <Pressable onPress={() => router.push({ pathname: '/kaart/[id]', params: { id: todayCard.id } })} style={({ pressed }) => [styles.dayCard, { backgroundColor: tones[todayTheme.tone] }, pressed && { opacity: 0.85 }]} accessibilityRole="button">
+            <Eyebrow>{todayTheme.label}</Eyebrow>
             <Text style={styles.dayCardText}>{todayCard.question}</Text>
-            <Small style={{ color: colors.plum }}>{todayCardState?.partnerDone ? `${partnerName} heeft al geantwoord · ` : ''}Tik om te antwoorden</Small>
+            <Row style={{ justifyContent: 'space-between' }}>
+              <Small style={{ color: colors.plum, flex: 1 }}>{todayCardState?.partnerDone ? `${partnerName} heeft al geantwoord · ` : ''}Tik om te antwoorden</Small>
+              <Icon name="arrow" color={colors.plum} size={18} />
+            </Row>
           </Pressable>
         ) : (
           <Small>Jullie hebben alle kaarten beantwoord. Nieuwe kaarten komen eraan.</Small>
@@ -255,8 +276,11 @@ export default function Vandaag() {
         <View style={styles.tonight}>
           <Row style={{ justifyContent: 'space-between' }}>
             <Text style={styles.tonightTag}>After Dark · Vanavond</Text>
-            <Pressable onPress={() => router.push('/afterdark')} accessibilityRole="button" hitSlop={8}>
-              <Text style={styles.tonightLink}>Meer →</Text>
+            <Pressable onPress={() => router.push('/afterdark')} accessibilityRole="button" hitSlop={12}>
+              <Row gap={4}>
+                <Text style={styles.tonightLink}>Meer</Text>
+                <Icon name="arrow" color={night.muted} size={16} />
+              </Row>
             </Pressable>
           </Row>
           <VonkPanel compact />
@@ -265,13 +289,13 @@ export default function Vandaag() {
 
       {hasPartner && (
         <Card tone="white">
-          <Strong>Zomaar iets liefs sturen</Strong>
+          <H2>Zomaar iets liefs sturen</H2>
           <View style={styles.gestures}>
             {gestures
               .filter(g => g.id !== 'bericht')
               .map(g => (
                 <Pressable key={g.id} style={({ pressed }) => [styles.gesture, pressed && { opacity: 0.7 }]} onPress={() => sendGesture(g.id)} accessibilityRole="button">
-                  <Text style={{ fontSize: 22 }}>{g.emoji}</Text>
+                  {gestureIcon[g.id] ? <Icon name={gestureIcon[g.id]!} color={colors.plum} size={24} /> : <Text style={{ fontSize: 22 }}>{g.emoji}</Text>}
                   <Text style={styles.gestureLabel}>{g.label}</Text>
                 </Pressable>
               ))}
@@ -282,12 +306,12 @@ export default function Vandaag() {
 
       {owed.map(c => (
         <Card key={c.id} tone="lav" onPress={() => router.push('/beloningen')}>
-          <Small>{partnerName} heeft gewonnen en koos:</Small>
+          <Small style={{ color: colors.text }}>{partnerName} heeft gewonnen en koos:</Small>
           <Strong>{c.rewardTitle}</Strong>
         </Card>
       ))}
 
-      <H2>Meer samen</H2>
+      <H2 style={{ marginTop: space.sm }}>Meer samen</H2>
       <View style={styles.stations}>
         {stations.map(st => {
           const waiting = st.waiting?.(state);
@@ -297,10 +321,12 @@ export default function Vandaag() {
               onPress={() => router.push(st.route)}
               style={({ pressed }) => [styles.station, { backgroundColor: st.dark ? night.card : tones[st.tone] }, pressed && { opacity: 0.8 }]}
               accessibilityRole="button">
-              <Text style={{ fontSize: 26 }}>{st.emoji}</Text>
-              <Strong style={st.dark && { color: '#F7E9F0' }}>{st.title}</Strong>
-              <Small style={st.dark && { color: '#C7AFC9' }}>{st.blurb}</Small>
-              {waiting && <Text style={[styles.waiting, st.dark && { color: '#FF7AA8' }]}>● {waiting}</Text>}
+              <Icon name={st.icon} color={st.dark ? night.rose : colors.plum} size={26} />
+              <View style={{ gap: 4, marginTop: 14 }}>
+                <Strong style={st.dark && { color: night.text }}>{st.title}</Strong>
+                <Small style={{ color: st.dark ? night.muted : colors.text }}>{st.blurb}</Small>
+                {waiting && <Text style={[styles.waiting, st.dark && { color: night.rose }]}>● {waiting}</Text>}
+              </View>
             </Pressable>
           );
         })}
@@ -310,29 +336,32 @@ export default function Vandaag() {
 }
 
 const styles = StyleSheet.create({
+  iconButton: { width: 44, height: 44, borderRadius: 22, borderWidth: 1, borderColor: colors.line, alignItems: 'center', justifyContent: 'center' },
   code: { fontFamily: fonts.black, fontSize: 34, letterSpacing: 6, color: colors.plum, textAlign: 'center', paddingVertical: space.sm },
+  stepNext: { borderColor: '#D9B4CA' },
   stepDone: { borderColor: '#BFE3D2' },
-  stepNum: { width: 28, height: 28, borderRadius: 14, backgroundColor: colors.plum, alignItems: 'center', justifyContent: 'center' },
-  stepNumText: { fontFamily: fonts.black, fontSize: 13, color: colors.white },
-  option: { backgroundColor: colors.cream, borderRadius: radius.md, borderWidth: 1, borderColor: colors.line, padding: space.md, gap: 4 },
-  optionTag: { fontFamily: fonts.bold, fontSize: 11, letterSpacing: 0.8, textTransform: 'uppercase', color: colors.rose },
-  week: { flexDirection: 'row', justifyContent: 'space-between' },
-  weekDay: { alignItems: 'center', gap: 4 },
-  weekDot: { width: 34, height: 34, borderRadius: 17, backgroundColor: colors.white, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: 'transparent' },
-  weekDotBoth: { backgroundColor: '#F4B6C8' },
+  stepNum: { width: 27, height: 27, borderRadius: 14, backgroundColor: colors.lav, alignItems: 'center', justifyContent: 'center' },
+  stepNumText: { fontFamily: fonts.black, fontSize: 12, color: colors.plum },
+  option: { borderTopWidth: 1, borderTopColor: colors.line, paddingVertical: 14, gap: 3, minHeight: 64 },
+  picked: { backgroundColor: colors.lav, borderRadius: radius.sm, borderWidth: 1.5, borderColor: colors.plum, padding: 14, gap: 3 },
+  optionTag: { fontFamily: fonts.black, fontSize: 10, letterSpacing: 1.1, textTransform: 'uppercase', color: colors.plum },
+  week: { flexDirection: 'row', justifyContent: 'space-between', marginVertical: 4 },
+  weekDay: { alignItems: 'center', gap: 5 },
+  weekDot: { width: 32, height: 32, borderRadius: 16, backgroundColor: colors.white, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: 'transparent' },
+  weekDotBoth: { backgroundColor: colors.plum },
   weekDotLove: { backgroundColor: colors.rose },
   weekDotToday: { borderColor: colors.plum },
-  weekDotText: { fontFamily: fonts.black, fontSize: 14, color: colors.white },
-  weekLabel: { fontFamily: fonts.bold, fontSize: 11, color: colors.muted },
-  dayCard: { borderRadius: radius.lg, padding: space.lg, gap: space.sm },
-  dayCardText: { fontFamily: fonts.bold, fontSize: 18, lineHeight: 24, color: colors.ink },
+  weekDotText: { fontFamily: fonts.black, fontSize: 13, color: colors.plum },
+  weekLabel: { fontFamily: fonts.bold, fontSize: 11, color: colors.text },
+  dayCard: { borderRadius: radius.md, padding: 18, gap: space.sm },
+  dayCardText: { fontFamily: fonts.black, fontSize: 19, lineHeight: 26, color: colors.ink, marginBottom: space.sm },
   gestures: { flexDirection: 'row', gap: space.sm },
-  tonight: { backgroundColor: night.bg, borderRadius: radius.lg, padding: space.lg, gap: space.sm },
-  tonightTag: { fontFamily: fonts.bold, fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: night.rose },
+  tonight: { backgroundColor: night.bg, borderRadius: radius.lg, padding: 18, gap: space.sm },
+  tonightTag: { fontFamily: fonts.black, fontSize: 11, letterSpacing: 1.2, textTransform: 'uppercase', color: night.rose },
   tonightLink: { fontFamily: fonts.bold, fontSize: 13, color: night.muted },
-  gesture: { flex: 1, backgroundColor: colors.cream, borderRadius: radius.md, paddingVertical: space.sm, alignItems: 'center', gap: 2 },
-  gestureLabel: { fontFamily: fonts.bold, fontSize: 11, color: colors.plum },
-  stations: { flexDirection: 'row', flexWrap: 'wrap', gap: space.md },
-  station: { width: '47%', flexGrow: 1, borderRadius: radius.lg, padding: space.lg, gap: 4 },
-  waiting: { fontFamily: fonts.bold, fontSize: 12, color: colors.roseDark, marginTop: 2 },
+  gesture: { flex: 1, minHeight: 76, backgroundColor: colors.cream, borderRadius: radius.sm, paddingVertical: space.md, alignItems: 'center', justifyContent: 'center', gap: space.sm },
+  gestureLabel: { fontFamily: fonts.bold, fontSize: 12, color: colors.plum },
+  stations: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  station: { width: '47%', flexGrow: 1, minHeight: 152, borderRadius: 16, padding: space.lg },
+  waiting: { fontFamily: fonts.bold, fontSize: 12, color: colors.roseText, marginTop: 2 },
 });

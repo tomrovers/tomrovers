@@ -1,20 +1,29 @@
-// Visual language of Samen, taken from the conceptbook: warm cream, plum ink and soft pastel cards.
+// Visual language of Samen, taken from the conceptbook and refined in design round 01 ("Dicht bij elkaar"):
+// warm cream, plum ink and soft pastel cards. Decorative colours are kept apart from the darker ones
+// used for small text, so text stays readable on every pastel.
 export const colors = {
   cream: '#FFF8F5',
   white: '#FFFFFF',
   ink: '#3D2240',
   plum: '#6E2D5C',
   text: '#5C4A5F',
-  muted: '#8A7A8D',
+  muted: '#746177',
+  /** Decorative pink: dots, bars and fills, not for small text. */
   rose: '#E0558A',
-  roseDark: '#C93F74',
+  /** Pink for text. */
+  roseText: '#A82C5C',
   pink: '#FBE4E8',
   lav: '#EFE5F8',
   mint: '#E6F3EE',
   peach: '#FFF0DC',
   blue: '#E5EAFB',
+  /** Divider and card outline. */
   line: '#ECD9DF',
-  success: '#3E9B76',
+  /** Outline of things you tap: options, fields and secondary buttons. */
+  control: '#9C879F',
+  success: '#2E7659',
+  disabledBg: '#E6DCE3',
+  disabledText: '#66516B',
 } as const;
 
 export type CardTone = 'pink' | 'lav' | 'mint' | 'peach' | 'blue' | 'white';
@@ -35,7 +44,8 @@ export const fonts = {
 } as const;
 
 export const space = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 } as const;
-export const radius = { sm: 10, md: 16, lg: 22, pill: 999 } as const;
+/** sm: buttons and options, md: tiles, lg: cards. */
+export const radius = { sm: 12, md: 14, lg: 18, pill: 999 } as const;
 
 /** After Dark has its own night look, so it never feels like part of the everyday screens. */
 export const night = {
@@ -43,6 +53,7 @@ export const night = {
   card: '#33203B',
   cardHi: '#43294D',
   line: '#4E3459',
+  control: '#94739E',
   text: '#F7E9F0',
   muted: '#C7AFC9',
   rose: '#FF7AA8',

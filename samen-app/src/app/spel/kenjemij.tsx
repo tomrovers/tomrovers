@@ -32,7 +32,7 @@ function Result({ round, partnerName }: { round: KjmRound; partnerName: string }
             <Small>
               {partnerName}: {q.options[round.partner!.self[i]]}
             </Small>
-            <Small style={{ color: right ? colors.success : colors.roseDark }}>
+            <Small style={{ color: right ? colors.success : colors.roseText }}>
               Jouw gok: {q.options[round.mine!.guess[i]]} {right ? '✓' : '✗'}
             </Small>
           </Card>

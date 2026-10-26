@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: colors.plum,
   },
-  meName: { color: colors.roseDark },
+  meName: { color: colors.roseText },
   emote: { position: 'absolute', top: -30, left: FIGURE_W / 2 - 11, fontSize: 20 },
   badge: {
     position: 'absolute',

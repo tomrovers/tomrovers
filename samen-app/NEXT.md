@@ -34,6 +34,15 @@ Read FOCUS.md and README.md first. Talk to Tom in Dutch; he has no programming e
    Preview APK with the reminder: build 25b14de2-e1d2-4b4d-87a0-ea113b954eef (finished, expires 2026-11-09); it
    replaces build 77a99a76 in PROJECT.md. Its usage budget (1 build, 30 sandbox min) is used up.
 
+6. Done (2026-10-26): design round 01 from ChatGPT ("Dicht bij elkaar", in `design/van-chatgpt/2026-10-26-ontwerprichting-v1/`),
+   steps 1–4 of its VOOR-CLAUDE.md: colour roles in `theme.ts` (darker muted, `roseText`, `control`, disabled colours),
+   12 px buttons and outlined chips/secondary buttons in `ui.tsx`, the line icons in `icon.tsx` (stations now have
+   `icon` instead of `emoji`; mood faces are `mood-<id>`), and restyled Vandaag, check-in, After Dark and Vonk.
+   Tom approved the direction. Deliberately kept text at 15/13 instead of the proposed 14/12. Not yet done: the logo
+   and Android icon layers (Tom still has to approve the mark; he and I find the hands read a bit like birds), and the
+   layout of the other screens (they only picked up the new colours and components). Passed tsc and eslint in a
+   sandbox; not visually checked in a browser (the built-in browser can't open the sandbox link or a local file).
+
 ## Working without Node on Tom's computer
 Tom's laptop has no Node.js. To add packages or run tsc/eslint: push a temporary branch, start an EAS sandbox
 (`sandbox_create` with `gitRef`, LINUX MEDIUM, needs a usage budget approved by Tom in chat with confirmationMode

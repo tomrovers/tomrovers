@@ -4,7 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/icon';
-import { Btn, Chip, T } from '@/components/night';
+import { Btn, Chip, Private, T } from '@/components/night';
 import { VonkPanel } from '@/components/vonk';
 import { actions } from '@/lib/actions';
 import { adCards, adLevels, adStickerById, adStickers, alignQuestions, wishes, type AdLevel, type Alignment, type WishAnswer } from '@/lib/afterdark';
@@ -45,13 +45,19 @@ export default function AfterDark() {
             </Pressable>
             <T kind="tag">After Dark · 18+</T>
           </View>
-          <T kind="h1">Alleen voor jullie twee 😈</T>
+          {!ad.active && (
+            <View style={styles.moonArt}>
+              <Icon name="moon" color={night.gold} size={29} />
+            </View>
+          )}
+          <T kind="h1">Alleen voor{'\n'}jullie twee.</T>
 
           {!ad.active && (
             <>
-              <T>
-                Romantische en ondeugende vragen, een wensenlijst waarin jullie alleen je matches zien, en stickers met jullie eigen humor. After Dark gaat pas open als jullie het allebei aanzetten.
+              <T style={{ color: night.muted }}>
+                Een beetje spanning, op jullie manier. Romantische en ondeugende vragen, een wensenlijst waarin jullie alleen je matches zien, en stickers met jullie eigen humor.
               </T>
+              <Private>Gaat alleen open als jullie het allebei aanzetten. Je ziet elkaars keuze niet.</Private>
               {ad.mine?.on ? (
                 <View style={styles.card}>
                   <T kind="h2">Staat aan voor jou</T>
@@ -64,16 +70,22 @@ export default function AfterDark() {
                 <View style={styles.card}>
                   <T kind="h2">Welke sfeer past bij jou?</T>
                   <T kind="small">Jullie krijgen de mildste van jullie twee keuzes. Je kunt het later altijd aanpassen.</T>
-                  {adLevels.map(l => (
-                    <Pressable key={l.level} onPress={() => setLevel(l.level)} style={[styles.level, level === l.level && styles.levelOn]} accessibilityRole="button" accessibilityState={{ selected: level === l.level }}>
-                      <T kind="h2" style={{ fontSize: 16 }}>
-                        {l.name}
-                      </T>
-                      <T kind="small">{l.blurb}</T>
-                    </Pressable>
-                  ))}
+                  {adLevels.map(l => {
+                    const on = level === l.level;
+                    return (
+                      <Pressable key={l.level} onPress={() => setLevel(l.level)} style={[styles.level, on && styles.levelOn]} accessibilityRole="radio" accessibilityState={{ selected: on }}>
+                        <View style={[styles.radio, on && styles.radioOn]} />
+                        <View style={{ flex: 1, gap: 2 }}>
+                          <T kind="h2" style={{ fontSize: 16 }}>
+                            {l.name}
+                          </T>
+                          <T kind="small">{l.blurb}</T>
+                        </View>
+                      </Pressable>
+                    );
+                  })}
                   <Pressable onPress={() => setAdult(a => !a)} style={styles.check} accessibilityRole="checkbox" accessibilityState={{ checked: adult }}>
-                    <View style={[styles.box, adult && { backgroundColor: night.rose, borderColor: night.rose }]}>{adult && <Text style={{ color: night.bg, fontFamily: fonts.black }}>✓</Text>}</View>
+                    <View style={[styles.box, adult && { backgroundColor: night.rose, borderColor: night.rose }]}>{adult && <Icon name="check" color={night.bg} size={16} />}</View>
                     <T kind="small" style={{ flex: 1, color: night.text }}>
                       Ik ben 18 jaar of ouder en wil After Dark gebruiken. Ik kan het altijd weer uitzetten.
                     </T>
@@ -81,18 +93,22 @@ export default function AfterDark() {
                   <Btn title="Zet aan voor mij" disabled={!adult} onPress={() => post(actions.adOptIn(true, level))} />
                 </View>
               )}
+              <T kind="small" style={{ textAlign: 'center' }}>
+                Alleen wat jullie samen willen.
+              </T>
             </>
           )}
 
           {ad.active && (
             <>
-              <View style={styles.row}>
-                <T kind="small">
-                  Sfeer: <Text style={{ color: night.rose, fontFamily: fonts.bold }}>{levelName}</Text> · de mildste van jullie twee keuzes
+              <View>
+                <T kind="small" style={{ color: night.text }}>
+                  Sfeer: <Text style={{ color: night.rose, fontFamily: fonts.bold }}>{levelName}</Text>
                 </T>
+                <T kind="small">De mildste van jullie twee keuzes.</T>
               </View>
               <View style={styles.tabs}>
-                <Chip label="Vonk 🔥" on={tab === 'vonk'} onPress={() => setTab('vonk')} />
+                <Chip label="Vonk" on={tab === 'vonk'} onPress={() => setTab('vonk')} />
                 <Chip label="Afstemmen" on={tab === 'afstemmen'} onPress={() => setTab('afstemmen')} />
                 <Chip label="Kaarten" on={tab === 'kaarten'} onPress={() => setTab('kaarten')} />
                 <Chip label={`Wensen${ad.matches.length ? ` · ${ad.matches.length} ❤` : ''}`} on={tab === 'wensen'} onPress={() => setTab('wensen')} />
@@ -289,11 +305,14 @@ const styles = StyleSheet.create({
   scroll: { padding: 20, paddingBottom: 64 },
   inner: { width: '100%', maxWidth: 560, alignSelf: 'center', gap: space.md },
   row: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
-  card: { backgroundColor: night.card, borderRadius: radius.lg, padding: space.lg, gap: space.sm, borderWidth: 1, borderColor: night.line },
-  level: { borderRadius: radius.md, padding: space.md, borderWidth: 1, borderColor: night.line, gap: 2 },
-  levelOn: { borderColor: night.rose, backgroundColor: night.cardHi },
-  check: { flexDirection: 'row', gap: space.md, alignItems: 'center', paddingVertical: space.sm },
-  box: { width: 24, height: 24, borderRadius: 6, borderWidth: 2, borderColor: night.muted, alignItems: 'center', justifyContent: 'center' },
+  card: { backgroundColor: night.card, borderRadius: radius.lg, padding: 18, gap: space.sm, borderWidth: 1, borderColor: night.line },
+  moonArt: { width: 64, height: 64, borderRadius: 32, borderWidth: 1, borderColor: night.line, backgroundColor: night.card, alignItems: 'center', justifyContent: 'center', marginTop: space.sm },
+  level: { flexDirection: 'row', alignItems: 'center', gap: 14, minHeight: 76, borderRadius: radius.md, padding: 15, borderWidth: 1, borderColor: night.control, backgroundColor: night.card },
+  levelOn: { borderColor: night.rose, borderWidth: 1.5, backgroundColor: night.cardHi },
+  radio: { width: 18, height: 18, borderRadius: 9, borderWidth: 1, borderColor: night.muted },
+  radioOn: { borderWidth: 5, borderColor: night.rose },
+  check: { flexDirection: 'row', gap: space.md, alignItems: 'flex-start', paddingVertical: space.sm, minHeight: 56 },
+  box: { width: 22, height: 22, borderRadius: 5, borderWidth: 1.5, borderColor: night.muted, alignItems: 'center', justifyContent: 'center', marginTop: 1 },
   tabs: { flexDirection: 'row', flexWrap: 'wrap', gap: space.sm },
   match: { flexDirection: 'row', alignItems: 'center', gap: space.sm, paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: night.line },
   tip: { borderRadius: radius.md, padding: space.md, borderWidth: 1, borderColor: night.line, gap: 4 },

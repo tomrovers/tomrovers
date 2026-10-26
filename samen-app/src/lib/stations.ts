@@ -1,5 +1,6 @@
 import type { Href } from 'expo-router';
 
+import type { IconName } from '@/components/icon';
 import type { CardTone } from '@/theme';
 
 import type { CoupleState } from './state';
@@ -14,7 +15,7 @@ export type Station = {
   title: string;
   /** What you do there, in a few words. */
   blurb: string;
-  emoji: string;
+  icon: IconName;
   tone: CardTone;
   route: Href;
   /** Where it would stand in the house, for the 3D version later. */
@@ -30,7 +31,7 @@ export const stations: Station[] = [
     id: 'kaarten',
     title: 'Gesprekskaarten',
     blurb: 'Vragen die een gesprek op gang brengen',
-    emoji: '🃏',
+    icon: 'cards',
     tone: 'lav',
     route: '/kaarten',
     houseSpot: 'de kaartendoos op tafel',
@@ -40,7 +41,7 @@ export const stations: Station[] = [
     id: 'spelen',
     title: 'Samen spelen',
     blurb: 'Ken je mij? en Reflex Battle',
-    emoji: '🎲',
+    icon: 'game',
     tone: 'mint',
     route: '/spelen',
     houseSpot: 'de spelletjeskast',
@@ -50,7 +51,7 @@ export const stations: Station[] = [
     id: 'kompas',
     title: 'Ons Kompas',
     blurb: 'Wat jullie over elkaar weten',
-    emoji: '🧭',
+    icon: 'compass',
     tone: 'blue',
     route: '/kompas',
     houseSpot: 'het prikbord',
@@ -60,7 +61,7 @@ export const stations: Station[] = [
     id: 'beloningen',
     title: 'Beloningenpot',
     blurb: 'Wat de winnaar mag kiezen',
-    emoji: '🎁',
+    icon: 'gift',
     tone: 'peach',
     route: '/beloningen',
     houseSpot: 'de cadeautafel',
@@ -70,7 +71,7 @@ export const stations: Station[] = [
     id: 'afterdark',
     title: 'After Dark',
     blurb: 'Vonk, afstemmen, wensen en stickers · 18+',
-    emoji: '😈',
+    icon: 'moon',
     tone: 'lav',
     dark: true,
     route: '/afterdark',
@@ -88,7 +89,7 @@ export const stations: Station[] = [
     id: 'prestaties',
     title: 'Stickerboek',
     blurb: 'Wat jullie samen verdienden',
-    emoji: '🏅',
+    icon: 'stickers',
     tone: 'pink',
     route: '/prestaties',
     houseSpot: 'de prijzenkast',
