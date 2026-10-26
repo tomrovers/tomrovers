@@ -49,6 +49,12 @@ Wachtwoorden en sleutels staan hier bewust niet in.
 
 ## Samenwerken
 
+De gedeelde map staat op Toms computer: `C:\Users\Tom\Desktop\EENMANSZAAK\claddagh`. Dat is een kopie van deze
+GitHub-repository (branch `claude/new-session-v9garq`).
+
+- **ChatGPT** leest de bestanden uit die map (zie `design/README.md`) en wat het maakt komt in `design/van-chatgpt/`.
+- **Claude Code** draait op dezelfde computer in die map, bouwt de ontwerpen in, test ze en zet alles op GitHub.
+
 - **Claude (Claude Code)** bouwt de app, de server en de builds, en houdt `samen-app/NEXT.md` bij.
 - **ChatGPT of een designer** werkt aan het ontwerp vanuit `design/README.md`. Tom brengt de resultaten naar Claude,
   die ze inbouwt.
