@@ -1,9 +1,11 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
+import { View } from 'react-native';
 
 import { defaultAvatar } from '@/components/avatar';
 import { AvatarEditor } from '@/components/avatar-editor';
-import { Body, Button, Eyebrow, Field, H1, H2, Screen } from '@/components/ui';
+import { Brand } from '@/components/logo';
+import { Body, Button, Eyebrow, Field, H1, H2, Screen, Small } from '@/components/ui';
 import { useStore } from '@/lib/store';
 import type { AvatarConfig } from '@/lib/types';
 
@@ -21,7 +23,11 @@ export default function Welkom() {
 
   return (
     <Screen>
-      <Eyebrow>Welkom bij Samen</Eyebrow>
+      <View style={{ alignItems: 'center', paddingVertical: 8 }}>
+        <Brand size={120} stacked />
+        <Small>Een klein moment. Meer van elkaar.</Small>
+      </View>
+      <Eyebrow>Welkom bij Claddagh</Eyebrow>
       <H1>Van eerste klik tot blijvende verbinding</H1>
       <Body>Maak eerst je eigen mini-jij. Je partner ziet deze LoveGotchi in jullie gezamenlijke huisje.</Body>
       <H2>Hoe heet je?</H2>

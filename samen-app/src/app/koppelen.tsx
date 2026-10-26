@@ -1,7 +1,8 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 
-import { Body, Button, Card, Eyebrow, Field, H1, H2, Screen, Small } from '@/components/ui';
+import { Brand } from '@/components/logo';
+import { Body, Button, Card, Field, H1, H2, Screen, Small } from '@/components/ui';
 import { notify } from '@/lib/notify';
 import { useStore } from '@/lib/store';
 
@@ -24,7 +25,7 @@ export default function Koppelen() {
 
   return (
     <Screen>
-      <Eyebrow>Samen Couples</Eyebrow>
+      <Brand size={36} />
       <H1>Hoi {profile?.name}! Koppel met je partner</H1>
       <Body>Jullie krijgen allebei een eigen account. Wat persoonlijk is, blijft van jezelf; wat jullie delen, zien jullie samen.</Body>
 

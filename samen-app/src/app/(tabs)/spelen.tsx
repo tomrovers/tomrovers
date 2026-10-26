@@ -14,7 +14,7 @@ export default function Spelen() {
 
   return (
     <Screen>
-      <Eyebrow>Samen Playground</Eyebrow>
+      <Eyebrow>Claddagh Playground</Eyebrow>
       <H1>Een potje voor de lol</H1>
       <Body>Wie wint, kiest een beloning uit jullie beloningenpot.</Body>
 

@@ -1,4 +1,4 @@
-# Claddagh (werktitel Samen): projectoverzicht
+# Claddagh (eerder werktitel Samen): projectoverzicht
 
 Een app voor stellen om tot de diepere lagen van elkaar te komen: meer begrip, richtlijnen om samen gelukkiger te
 worden, en meer synchroniteit, ook op seksueel gebied. Van Tom (eenmanszaak Stormvoer Enterprise) en Annelieke.
@@ -19,8 +19,8 @@ worden, en meer synchroniteit, ook op seksueel gebied. Van Tom (eenmanszaak Stor
 ## Beslissingen
 
 - **Naam**: Claddagh, naar de ring die Tom aan Annelieke gaf. Nog te controleren in het merkregister
-  ([TMview](https://www.tmdn.org/tmview), klassen 9, 42 en 45); de app heet in de code nog "Samen".
-- **Logo**: twee handen die een hart vasthouden, met een kroon. De uitwerking wordt nog verfijnd.
+  ([TMview](https://www.tmdn.org/tmview), klassen 9, 42 en 45); in de app staat nu Claddagh; in de code en mapnamen heet hij nog "samen".
+- **Logo**: twee handen die een hart vasthouden, met een kroon. Eerste versie van ChatGPT staat in de app; wordt nog verfijnd.
 - **Focus**: eerst de dagelijkse kern en After Dark; het 3D-huis en avatars van een foto komen later.
 - **Eerst Android**, daarna de iPhone.
 - **Google Play**: organisatie-account via de eenmanszaak (D-U-N-S-nummer aanvragen). **Apple**: als individu.

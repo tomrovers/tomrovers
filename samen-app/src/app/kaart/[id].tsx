@@ -78,7 +78,7 @@ export default function Kaart() {
           </Card>
           <Card tone="pink">
             <Strong>Iets om te onthouden?</Strong>
-            <Small>Bewaar een inzicht in het Kompas. Samen herinnert je er later aan.</Small>
+            <Small>Bewaar een inzicht in het Kompas. Claddagh herinnert je er later aan.</Small>
             {insight === null ? (
               saved ? (
                 <Small>Bewaard in het Kompas ✓</Small>

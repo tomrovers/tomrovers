@@ -45,14 +45,20 @@ Read FOCUS.md and README.md first. Talk to Tom in Dutch; he has no programming e
    Preview APK with the new style: build 88e123be-9a44-419e-ad8b-e1def632ed31 (finished, expires 2026-11-09); it
    replaces build 25b14de2 in PROJECT.md. Its usage budget is used up.
 
+7. Done (2026-10-26): the app is called **Claddagh** for users (app.json `name`, screen texts, test page title);
+   package, slug, scheme, folder and code names stay "samen" so installs update in place. ChatGPT's draft mark is in
+   `src/components/logo.tsx` (`Logo`, `Brand`) on loading, welkom, koppelen and the top of Vandaag, and its Android
+   layers, app icon (`icon.png` = logo on plum) and splash are in `assets/images/`. Tom wants it in now and refined
+   later; trademark check (TMview, classes 9/42/45) is still open before the stores.
+
 ## After every app change: update the test page too
 Tom wants a web test version he can open in Claude every time, not only the APK. In the same sandbox run as
 tsc/eslint: `npx expo export --platform web && node scripts/web-preview.mjs` writes `preview/samen-test.html`;
 upload it with `sandbox_artifact_create`, `curl` it into the scratchpad, read the live test page
 (https://claude.ai/artifact/A3FYh6hcTtSaBn338kxfvY, Artifact `read` without `path`) and publish the file to that
 `url` without `capabilities`, so its shared database (db, room, user) is kept. Version 9 (2026-10-26) has the new
-style and the reminder. The fragment step in web-preview.mjs was added on 2026-10-26 and has not run yet; the first
-time, check its output starts with `<title>Samen</title>` and ends with `__r(0);</script>`.
+style and the reminder; version 10 the Claddagh name and logo. The fragment step in web-preview.mjs works (checked
+2026-10-26: output starts with `<title>Claddagh</title>` and ends with `__r(0);</script>`).
 
 ## Working without Node on Tom's computer
 Tom's laptop has no Node.js. To add packages or run tsc/eslint: push a temporary branch, start an EAS sandbox

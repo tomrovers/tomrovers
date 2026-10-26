@@ -166,11 +166,11 @@ export default function Thuis() {
       {!hasPartner && session.code && (
         <Card tone="peach">
           <H2>Nodig je partner uit</H2>
-          <Body>Je partner installeert Samen en vult deze code in:</Body>
+          <Body>Je partner installeert Claddagh en vult deze code in:</Body>
           <Text style={styles.code} selectable>
             {session.code}
           </Text>
-          <Button title="Deel de code" variant="secondary" onPress={() => Share.share({ message: `Kom je bij mij in Samen? Onze koppelcode is ${session.code}` })} />
+          <Button title="Deel de code" variant="secondary" onPress={() => Share.share({ message: `Kom je bij mij in Claddagh? Onze koppelcode is ${session.code}` })} />
         </Card>
       )}
       {!hasPartner && mode === 'shared' && (

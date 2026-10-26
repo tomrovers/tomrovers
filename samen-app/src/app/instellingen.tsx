@@ -28,7 +28,7 @@ function ReminderCard() {
 
   const update = async (next: Reminder) => {
     if (next.on && !reminder.on && !(await allowReminders())) {
-      notify('Meldingen staan uit', 'Zet meldingen voor Samen aan in de instellingen van je telefoon en probeer het daarna opnieuw.');
+      notify('Meldingen staan uit', 'Zet meldingen voor Claddagh aan in de instellingen van je telefoon en probeer het daarna opnieuw.');
       return;
     }
     setReminder(next);
@@ -86,7 +86,7 @@ export default function Instellingen() {
 
   return (
     <Screen>
-      <Header eyebrow="Instellingen" title="Jij & Samen" />
+      <Header eyebrow="Instellingen" title="Jij & Claddagh" />
 
       <Card tone="pink">
         <H2>{state.me?.name}</H2>
@@ -149,7 +149,7 @@ export default function Instellingen() {
         onPress={leave}
         loading={busy}
       />
-      <Small style={{ textAlign: 'center' }}>Samen · versie 0.1 (testversie)</Small>
+      <Small style={{ textAlign: 'center' }}>Claddagh · versie 0.1 (testversie)</Small>
     </Screen>
   );
 }

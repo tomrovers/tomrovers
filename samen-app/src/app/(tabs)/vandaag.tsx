@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Pressable, Share, StyleSheet, Text, View } from 'react-native';
 
 import { Icon, type IconName } from '@/components/icon';
+import { Brand } from '@/components/logo';
 import { Body, Button, Card, Eyebrow, Field, H1, H2, Progress, Row, Screen, Small, Strong } from '@/components/ui';
 import { VonkPanel } from '@/components/vonk';
 import { actions } from '@/lib/actions';
@@ -83,16 +84,17 @@ export default function Vandaag() {
 
   return (
     <Screen>
-      <Row style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <View style={{ flex: 1, gap: 2 }}>
-          <Eyebrow>{dateLabel}</Eyebrow>
-          <H1>{hasPartner ? `${state.me?.name ?? 'Jij'} & ${partnerName}` : 'Vandaag'}</H1>
-          <Body>Een klein moment. Meer van elkaar.</Body>
-        </View>
+      <Row style={{ justifyContent: 'space-between' }}>
+        <Brand size={32} />
         <Pressable onPress={() => router.push('/instellingen')} accessibilityRole="button" accessibilityLabel="Instellingen" style={({ pressed }) => [styles.iconButton, pressed && { opacity: 0.7 }]}>
           <Icon name="settings" color={colors.plum} size={22} />
         </Pressable>
       </Row>
+      <View style={{ gap: 2, marginBottom: space.sm }}>
+        <Eyebrow>{dateLabel}</Eyebrow>
+        <H1>{hasPartner ? `${state.me?.name ?? 'Jij'} & ${partnerName}` : 'Vandaag'}</H1>
+        <Body>Een klein moment. Meer van elkaar.</Body>
+      </View>
 
       {mode === 'demo' && sharedAvailable && (
         <Card tone="peach">
@@ -115,11 +117,11 @@ export default function Vandaag() {
       {!hasPartner && session.code && (
         <Card tone="peach">
           <H2>Nodig je partner uit</H2>
-          <Body>Je partner installeert Samen en vult deze code in:</Body>
+          <Body>Je partner installeert Claddagh en vult deze code in:</Body>
           <Text style={styles.code} selectable>
             {session.code}
           </Text>
-          <Button title="Deel de code" variant="secondary" onPress={() => Share.share({ message: `Kom je bij mij in Samen? Onze koppelcode is ${session.code}` })} />
+          <Button title="Deel de code" variant="secondary" onPress={() => Share.share({ message: `Kom je bij mij in Claddagh? Onze koppelcode is ${session.code}` })} />
         </Card>
       )}
       {!hasPartner && mode === 'shared' && (

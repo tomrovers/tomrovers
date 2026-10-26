@@ -34,7 +34,7 @@ const head = html.slice(html.indexOf('<head>') + '<head>'.length, html.indexOf('
 const body = html.slice(html.indexOf('<body>') + '<body>'.length, html.lastIndexOf('</body>'));
 const styles = head.replace(/<meta[^>]*>|<title>[^<]*<\/title>|<script>try \{ history[^<]*<\/script>/g, '');
 const fragment = [
-  '<title>Samen</title>',
+  '<title>Claddagh</title>',
   '<style>html{box-sizing:border-box;background:#FFF8F5}body{background:#FFF8F5;color:#3D2240}</style>',
   "<script>try { history.replaceState(null, '', '/'); } catch (e) {}</script>",
   styles + body,

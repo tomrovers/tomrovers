@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Samen",
+    "name": "Claddagh",
     "slug": "samen",
     "owner": "stormvoerenterprise",
     "version": "0.1.0",
@@ -18,7 +18,8 @@
     "android": {
       "package": "com.tomrovers.samen",
       "adaptiveIcon": {
-        "backgroundColor": "#6E2D5C",
+        "backgroundColor": "#FFF8F5",
+        "backgroundImage": "./assets/images/android-icon-background.png",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
@@ -27,7 +28,7 @@
     "web": {
       "output": "single",
       "favicon": "./assets/images/favicon.png",
-      "name": "Samen",
+      "name": "Claddagh",
       "themeColor": "#FFF8F5",
       "backgroundColor": "#FFF8F5"
     },
@@ -46,7 +47,7 @@
         {
           "backgroundColor": "#FFF8F5",
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 120
+          "imageWidth": 180
         }
       ],
       "expo-font",

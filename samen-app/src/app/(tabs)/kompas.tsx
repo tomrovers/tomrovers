@@ -52,7 +52,7 @@ export default function Kompas() {
 
   return (
     <Screen>
-      <Eyebrow>Het Samen Kompas</Eyebrow>
+      <Eyebrow>Het Claddagh Kompas</Eyebrow>
       <H1>Onthouden wat de ander nodig heeft</H1>
       <Body>Ontdekken, onthouden, in de praktijk brengen en bijstellen. Jij bepaalt wat {partnerName} ervan ziet.</Body>
 
