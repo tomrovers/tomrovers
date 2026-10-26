@@ -1,0 +1,175 @@
+{
+  "date": "2026-10-26",
+  "status": "DRAFT — NIET GEPUBLICEERD",
+  "checks": [
+    "HTML opent lokaal en de lettertypes laden.",
+    "Vier schermen op 390 × 844 px, met zichtbare knoppen van minimaal 44 × 44 px.",
+    "Check-inselecties, verplichtingen, tekstteller en eigen bevestiging gecontroleerd.",
+    "Gebaar kiezen en terug naar de drie bestaande voorstellen gecontroleerd.",
+    "18+ blokkade, sfeerkiezen, eigen opt-in en uitzetten gecontroleerd. Eigen opt-in geeft geen automatische toegang.",
+    "Vonkselectie, gelijkwaardige knuffelreactie en After Dark uitzetten gecontroleerd.",
+    "Alle zes ontwerpweergaven zonder horizontale overflow op 360 en 390 px; knoppen behouden minimaal 44 × 44 px.",
+    "Geen JavaScriptfouten of externe netwerkverzoeken in het ontwerpvoorbeeld.",
+    "Android voorgrond past binnen de veilige cirkel van 66 dp; monochroom bevat één kleur plus transparantie."
+  ],
+  "contrast": [
+    {
+      "label": "Dag: inkt op crème",
+      "foreground": "#3D2240",
+      "background": "#FFF8F5",
+      "ratio": 13.32
+    },
+    {
+      "label": "Dag: body op crème",
+      "foreground": "#5C4A5F",
+      "background": "#FFF8F5",
+      "ratio": 7.69
+    },
+    {
+      "label": "Dag: secundair op crème",
+      "foreground": "#746177",
+      "background": "#FFF8F5",
+      "ratio": 5.38
+    },
+    {
+      "label": "Dag: secundair op roze",
+      "foreground": "#746177",
+      "background": "#FBE4E8",
+      "ratio": 4.67
+    },
+    {
+      "label": "Dag: secundair op lavendel",
+      "foreground": "#746177",
+      "background": "#EFE5F8",
+      "ratio": 4.63
+    },
+    {
+      "label": "Dag: donkerroze op crème",
+      "foreground": "#A82C5C",
+      "background": "#FFF8F5",
+      "ratio": 6.29
+    },
+    {
+      "label": "Dag: witte knoptekst op pruim",
+      "foreground": "#FFFFFF",
+      "background": "#6E2D5C",
+      "ratio": 9.58
+    },
+    {
+      "label": "Dag: geselecteerde tekst op lavendel",
+      "foreground": "#6E2D5C",
+      "background": "#EFE5F8",
+      "ratio": 7.86
+    },
+    {
+      "label": "Dag: bevestiging op mint",
+      "foreground": "#2E7659",
+      "background": "#E6F3EE",
+      "ratio": 4.78
+    },
+    {
+      "label": "Nacht: hoofdtekst",
+      "foreground": "#F7E9F0",
+      "background": "#24142B",
+      "ratio": 14.77
+    },
+    {
+      "label": "Nacht: secundaire tekst",
+      "foreground": "#C7AFC9",
+      "background": "#33203B",
+      "ratio": 7.38
+    },
+    {
+      "label": "Nacht: secundair op verhoogde kaart",
+      "foreground": "#C7AFC9",
+      "background": "#43294D",
+      "ratio": 6.26
+    },
+    {
+      "label": "Nacht: roze tekst",
+      "foreground": "#FF7AA8",
+      "background": "#24142B",
+      "ratio": 7.11
+    },
+    {
+      "label": "Nacht: knoptekst",
+      "foreground": "#24142B",
+      "background": "#FF7AA8",
+      "ratio": 7.11
+    },
+    {
+      "label": "Dag: uitgeschakelde knop",
+      "foreground": "#66516B",
+      "background": "#E6DCE3",
+      "ratio": 5.32
+    },
+    {
+      "label": "Dag: weekoverzicht",
+      "foreground": "#5C4A5F",
+      "background": "#FBE4E8",
+      "ratio": 6.68
+    }
+  ],
+  "screens": [
+    {
+      "id": "vandaag",
+      "width": 390,
+      "height": 844,
+      "buttons": 21,
+      "minTarget": 44
+    },
+    {
+      "id": "checkin",
+      "width": 390,
+      "height": 844,
+      "buttons": 17,
+      "minTarget": 44
+    },
+    {
+      "id": "aanzetten",
+      "width": 390,
+      "height": 844,
+      "buttons": 5,
+      "minTarget": 44
+    },
+    {
+      "id": "vonk",
+      "width": 390,
+      "height": 844,
+      "buttons": 19,
+      "minTarget": 44
+    }
+  ],
+  "controlContrast": [
+    {
+      "foreground": "#9C879F",
+      "background": "#FFF8F5",
+      "ratio": 3.13
+    },
+    {
+      "foreground": "#9C879F",
+      "background": "#FFFFFF",
+      "ratio": 3.29
+    },
+    {
+      "foreground": "#94739E",
+      "background": "#33203B",
+      "ratio": 3.69
+    },
+    {
+      "foreground": "#94739E",
+      "background": "#43294D",
+      "ratio": 3.13
+    }
+  ],
+  "adaptiveIcon": {
+    "canvas": 1080,
+    "safeCircleRadius": 330,
+    "actualMaxRadius": 314.45,
+    "artWidthDp": 59.2,
+    "artHeightDp": 48.8,
+    "monochromeColors": [
+      "110,45,92"
+    ]
+  }
+}

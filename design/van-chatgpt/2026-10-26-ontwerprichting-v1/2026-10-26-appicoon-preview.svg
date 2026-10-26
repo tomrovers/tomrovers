@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Claddagh: twee handen dragen een hart met een kroon" width="512" height="512" viewBox="18 18 72 72"><path fill="#FFF8F5" d="M0 0H108V108H0Z"/><g transform="translate(17 14.625) scale(.37 .45)"><path d="M78 65 74 43 89 52 100 33 111 52 126 43 122 65Z" fill="#F2C14E"/>
+<path d="M100 128C91 120 69 105 69 89C69 73 89 67 100 83C111 67 131 73 131 89C131 105 109 120 100 128Z" fill="#E0558A"/>
+<path d="M20 111 34 101C39 98 45 100 49 105L53 88C54 82 62 81 65 87L70 109C72 115 77 118 83 117L88 116C94 115 97 121 93 126C86 136 77 142 67 141C56 140 46 133 38 125L24 118Z" fill="#6E2D5C"/>
+<path d="M20 111 34 101C39 98 45 100 49 105L53 88C54 82 62 81 65 87L70 109C72 115 77 118 83 117L88 116C94 115 97 121 93 126C86 136 77 142 67 141C56 140 46 133 38 125L24 118Z" transform="translate(200 0) scale(-1 1)" fill="#6E2D5C"/>
+<g fill="none" stroke="#FFF8F5" stroke-width="2.5" stroke-linecap="round"><path d="M53 116Q67 131 81 128M147 116Q133 131 119 128"/></g></g></svg>
