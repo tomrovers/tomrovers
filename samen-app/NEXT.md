@@ -42,6 +42,8 @@ Read FOCUS.md and README.md first. Talk to Tom in Dutch; he has no programming e
    and Android icon layers (Tom still has to approve the mark; he and I find the hands read a bit like birds), and the
    layout of the other screens (they only picked up the new colours and components). Passed tsc and eslint in a
    sandbox; not visually checked in a browser (the built-in browser can't open the sandbox link or a local file).
+   Preview APK with the new style: build 88e123be-9a44-419e-ad8b-e1def632ed31 (finished, expires 2026-11-09); it
+   replaces build 25b14de2 in PROJECT.md. Its usage budget is used up.
 
 ## Working without Node on Tom's computer
 Tom's laptop has no Node.js. To add packages or run tsc/eslint: push a temporary branch, start an EAS sandbox

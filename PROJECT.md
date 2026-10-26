@@ -33,7 +33,7 @@ worden, en meer synchroniteit, ook op seksueel gebied. Van Tom (eenmanszaak Stor
 | Logo-ontwerpen | https://claude.ai/artifact/AWuDghr8ghgEHR4CRYc9oX |
 | Server (Supabase, Frankfurt) | https://supabase.com/dashboard/project/xxeiwtqnhbnppfeppdzb |
 | Builds (Expo) | https://expo.dev/accounts/stormvoerenterprise/projects/samen |
-| Nieuwste Android-testversie, met dagelijkse herinnering (tot 9 november 2026) | https://expo.dev/accounts/stormvoerenterprise/projects/samen/builds/25b14de2-e1d2-4b4d-87a0-ea113b954eef |
+| Nieuwste Android-testversie, met de nieuwe stijl en de dagelijkse herinnering (tot 9 november 2026) | https://expo.dev/accounts/stormvoerenterprise/projects/samen/builds/88e123be-9a44-419e-ad8b-e1def632ed31 |
 
 Wachtwoorden en sleutels staan hier bewust niet in.
 
