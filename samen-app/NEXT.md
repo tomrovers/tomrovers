@@ -31,6 +31,8 @@ Read FOCUS.md and README.md first. Talk to Tom in Dutch; he has no programming e
    Local only, per phone: it plans 14 one-off DATE notifications (not a repeating one) so today's is skipped after you
    check in; replanned on app open/foreground. No exact-alarm permission, so Android may deliver a few minutes late.
    Checked in an EAS sandbox (tsc, eslint, web export, android prebuild all pass); not yet tried on a real phone.
+   Preview APK with the reminder: build 25b14de2-e1d2-4b4d-87a0-ea113b954eef (finished, expires 2026-11-09); it
+   replaces build 77a99a76 in PROJECT.md. Its usage budget (1 build, 30 sandbox min) is used up.
 
 ## Working without Node on Tom's computer
 Tom's laptop has no Node.js. To add packages or run tsc/eslint: push a temporary branch, start an EAS sandbox
