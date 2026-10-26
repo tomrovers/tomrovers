@@ -45,6 +45,15 @@ Read FOCUS.md and README.md first. Talk to Tom in Dutch; he has no programming e
    Preview APK with the new style: build 88e123be-9a44-419e-ad8b-e1def632ed31 (finished, expires 2026-11-09); it
    replaces build 25b14de2 in PROJECT.md. Its usage budget is used up.
 
+## After every app change: update the test page too
+Tom wants a web test version he can open in Claude every time, not only the APK. In the same sandbox run as
+tsc/eslint: `npx expo export --platform web && node scripts/web-preview.mjs` writes `preview/samen-test.html`;
+upload it with `sandbox_artifact_create`, `curl` it into the scratchpad, read the live test page
+(https://claude.ai/artifact/A3FYh6hcTtSaBn338kxfvY, Artifact `read` without `path`) and publish the file to that
+`url` without `capabilities`, so its shared database (db, room, user) is kept. Version 9 (2026-10-26) has the new
+style and the reminder. The fragment step in web-preview.mjs was added on 2026-10-26 and has not run yet; the first
+time, check its output starts with `<title>Samen</title>` and ends with `__r(0);</script>`.
+
 ## Working without Node on Tom's computer
 Tom's laptop has no Node.js. To add packages or run tsc/eslint: push a temporary branch, start an EAS sandbox
 (`sandbox_create` with `gitRef`, LINUX MEDIUM, needs a usage budget approved by Tom in chat with confirmationMode

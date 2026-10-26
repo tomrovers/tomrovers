@@ -29,7 +29,7 @@ worden, en meer synchroniteit, ook op seksueel gebied. Van Tom (eenmanszaak Stor
 
 | Wat | Waar |
 |---|---|
-| Testpagina (werkt in de browser, ook met z'n tweeën) | https://claude.ai/artifact/A3FYh6hcTtSaBn338kxfvY |
+| Testpagina (werkt in de browser, ook met z'n tweeën; wordt bij elke wijziging bijgewerkt) | https://claude.ai/artifact/A3FYh6hcTtSaBn338kxfvY |
 | Logo-ontwerpen | https://claude.ai/artifact/AWuDghr8ghgEHR4CRYc9oX |
 | Server (Supabase, Frankfurt) | https://supabase.com/dashboard/project/xxeiwtqnhbnppfeppdzb |
 | Builds (Expo) | https://expo.dev/accounts/stormvoerenterprise/projects/samen |

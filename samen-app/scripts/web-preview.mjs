@@ -27,3 +27,18 @@ html = html.replace('<head>', `<head><script>try { history.replaceState(null, ''
 fs.mkdirSync(path.dirname(out), { recursive: true });
 fs.writeFileSync(out, html);
 console.log(`Wrote ${path.relative(process.cwd(), out)} (${(fs.statSync(out).size / 1024 / 1024).toFixed(1)} MB)`);
+
+// The test page on claude.ai (see PROJECT.md) is published from a fragment: the artifact server adds the
+// page skeleton itself. Keep the reset styles from the head and everything inside the body.
+const head = html.slice(html.indexOf('<head>') + '<head>'.length, html.indexOf('</head>'));
+const body = html.slice(html.indexOf('<body>') + '<body>'.length, html.lastIndexOf('</body>'));
+const styles = head.replace(/<meta[^>]*>|<title>[^<]*<\/title>|<script>try \{ history[^<]*<\/script>/g, '');
+const fragment = [
+  '<title>Samen</title>',
+  '<style>html{box-sizing:border-box;background:#FFF8F5}body{background:#FFF8F5;color:#3D2240}</style>',
+  "<script>try { history.replaceState(null, '', '/'); } catch (e) {}</script>",
+  styles + body,
+].join('\n');
+const testPage = path.resolve('preview/samen-test.html');
+fs.writeFileSync(testPage, fragment);
+console.log(`Wrote ${path.relative(process.cwd(), testPage)} for the claude.ai test page`);
